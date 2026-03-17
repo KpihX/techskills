@@ -11,7 +11,9 @@ No theory, no made-up examples. Everything here was lived on my machine and docu
 | Tutorial | Topic |
 |----------|-------|
 | [🔒 Tailscale](tailscale.md) | MagicDNS permanent fix, SSH config, Bitwarden SSH agent |
-| [🌐 GitHub Pages](github-pages.md) | Turn a Markdown repo into a Docsify site — local + online |
+| [🌐 GitHub Pages + Docsify](github-pages.md) | Turn a Markdown repo into a Docsify site — local + online, classic vs `gh` CLI |
+| [🐙 GitHub CLI (gh)](gh.md) | Repos, PRs, issues, releases, CI, raw API — all from the terminal |
+| [🦊 GitLab CLI (glab)](glab.md) | Repos, MRs, issues, pipelines, CI/CD, secrets — GitLab native CLI |
 
 ---
 

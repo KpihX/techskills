@@ -143,36 +143,127 @@ Open `http://localhost:3000` in your browser. Changes to `.md` files are reflect
 
 ---
 
-### 4. Push to GitHub
+### 4. Create the GitHub Repo & Push
+
+Two approaches — same result, different tools:
+
+```
+Method A — Classic (git + github.com web UI)
+  git init → create repo on github.com → git remote add → git push
+
+Method B — gh CLI (everything from the terminal, zero browser)
+  gh repo create → git remote add → git push
+```
+
+---
+
+#### Method A — Classic: git + github.com
 
 ```bash
 cd ~/Work/tutos_live
 
-# Initialize remotes (SSH — mandatory per KpihX standards)
-git remote add github git@github.com:kpihx/tutos_live.git
-git remote add gitlab git@gitlab.com:kpihx/tutos_live.git
-
-# First push
+# 1. Commit your files
 git add .
 git commit -m "feat: initial Docsify setup"
-git push github HEAD
-git push gitlab HEAD
 ```
+
+Then go to **https://github.com/new** in your browser:
+- Repository name: `tutos_live`
+- Visibility: Public
+- **Do NOT** initialize with README (you already have one)
+- Click **Create repository**
+
+GitHub shows you the remote URL. Copy the SSH one:
+
+```bash
+# 2. Add remote (SSH — always)
+git remote add github git@github.com:kpihx/tutos_live.git
+
+# 3. Push
+git push -u github master
+```
+
+---
+
+#### Method B — gh CLI (terminal only)
+
+```bash
+cd ~/Work/tutos_live
+
+# 1. Commit your files
+git add .
+git commit -m "feat: initial Docsify setup"
+
+# 2. Create repo on GitHub AND get the SSH remote URL
+gh repo create kpihx/tutos_live \
+  --public \
+  --description "Ubuntu-focused knowledge base"
+
+# 3. Add remote manually (gh create does NOT add it automatically)
+git remote add github git@github.com:kpihx/tutos_live.git
+
+# 4. Push
+git push github HEAD
+```
+
+> **Tip:** `gh repo create` accepts `--clone` to clone immediately, but since you're working from an existing local repo, adding the remote manually is cleaner.
 
 ---
 
 ### 5. Enable GitHub Pages
 
-GitHub Pages must be enabled manually — one-time setup in the repository settings:
+Two methods here as well:
 
-1. Go to your repo on GitHub: `https://github.com/kpihx/tutos_live`
+```
+Method A — Web UI:  github.com Settings → Pages → point to branch
+Method B — gh API:  one command, zero browser
+```
+
+---
+
+#### Method A — Web UI
+
+1. Go to `https://github.com/kpihx/tutos_live`
 2. **Settings** → **Pages** (left sidebar)
 3. Under **Build and deployment**:
    - Source: **Deploy from a branch**
-   - Branch: `main` · Folder: `/ (root)`
+   - Branch: `master` · Folder: `/ (root)`
 4. Click **Save**
 
-After ~1 minute, your site is live at:
+---
+
+#### Method B — gh api (terminal only, instant)
+
+```bash
+gh api repos/kpihx/tutos_live/pages \
+  --method POST \
+  -f "source[branch]=master" \
+  -f "source[path]=/"
+```
+
+Response confirms activation:
+```json
+{
+  "html_url": "https://kpihx.github.io/tutos_live/",
+  "source": { "branch": "master", "path": "/" },
+  "public": true
+}
+```
+
+Check status later:
+```bash
+gh api repos/kpihx/tutos_live/pages
+```
+
+Change branch or path after the fact:
+```bash
+gh api repos/kpihx/tutos_live/pages \
+  --method PUT \
+  -f "source[branch]=main" \
+  -f "source[path]=/"
+```
+
+After ~1 minute, site is live:
 
 ```
 https://kpihx.github.io/tutos_live/
@@ -180,13 +271,14 @@ https://kpihx.github.io/tutos_live/
 
 ```
 GitHub Pages
-└── Branch: main, root /
+└── Branch: master, root /
     ├── index.html   → served as entry point
     ├── README.md    → Docsify loads as homepage
     └── *.md         → loaded on demand by Docsify JS
 ```
 
-> **No `gh-pages` branch needed.** Serving from `main` root is the simplest setup for a docs-only repo.
+> **No `gh-pages` branch needed.** Serving from `master` root is the simplest setup for a docs-only repo.
+> **For more on `gh`**, see the dedicated tutorial → [gh.md](gh.md)
 
 ---
 

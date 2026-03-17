@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0] — 2026-03-17
+
+### Added
+- [x] `gh.md` — GitHub CLI full guide: install, auth, repos, PRs, issues, releases, CI, API
+- [x] `glab.md` — GitLab CLI full guide: install, auth, repos, MRs, issues, pipelines, CI/CD, secrets
+- [x] `github-pages.md` updated — classic (git + web UI) vs `gh` CLI methods for repo creation + Pages activation
+
 ## [0.1.0] — 2026-03-17
 
 ### Added
