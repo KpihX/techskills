@@ -1,7 +1,6 @@
 # TODO
 
 ## In Progress
-- [ ] Enable GitHub Pages (Settings → Pages → Branch: master, Folder: / (root))
 
 ## Planned Tutorials
 - [ ] `ssh-hardening.md` — SSH key management, Bitwarden SSH agent, port & auth config
@@ -18,3 +17,4 @@
 - [x] GitHub public repo created: https://github.com/KpihX/tutos_live
 - [x] GitLab public repo created: https://gitlab.com/kpihx/tutos_live
 - [x] Pushed to both remotes
+- [x] GitHub Pages enabled: https://kpihx.github.io/tutos_live/
