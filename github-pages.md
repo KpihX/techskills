@@ -7,55 +7,85 @@
 
 ## 🧩 Context & Problem
 
-You have a folder of Markdown files — field notes, tutorials, docs — and want to publish them as a browseable website **without a build step**.
+You have a folder of Markdown files — field notes, tutorials, docs — and want to
+publish them as a browseable website **without a build step**.
 
 ```
 Problem:  Most static site generators (Hugo, Jekyll, MkDocs) require:
-          - A build step
-          - A CI/CD pipeline
-          - Knowledge of their templating system
+          ┌─────────────────────────────────────────┐
+          │  build step → CI/CD pipeline → deploy   │
+          │  + templating language to learn          │
+          │  + dependencies to manage               │
+          └─────────────────────────────────────────┘
 
 Goal:     Push Markdown → GitHub Pages serves it instantly.
-          No build. No pipeline. No Node modules committed.
+          ┌──────────────────────────────────────────┐
+          │  git push → live site. That's it.        │
+          │  No build. No pipeline. No npm in repo.  │
+          └──────────────────────────────────────────┘
 ```
 
-**Solution: Docsify** — a single `index.html` loads your `.md` files client-side via JavaScript. GitHub Pages serves the raw files, Docsify renders them in the browser.
+**Solution: Docsify** — a single `index.html` loads your `.md` files
+client-side via JavaScript. GitHub Pages serves the raw files; Docsify
+renders them in the browser.
 
 ---
 
 ## 🏗️ Architecture & Concepts
 
+### End-to-end flow
+
 ```
-Your repo (tutos_live/)
-│
-├── index.html       ← Docsify bootstrap (just a CDN script tag)
-├── _sidebar.md      ← Navigation structure
-├── README.md        ← Site homepage (loaded as /README)
-└── *.md             ← All tutorials, loaded on demand
-
-        ↓  git push
-
-GitHub Pages
-└── Serves files as-is from branch root
-    No build, no processing
-
-        ↓  browser visits https://kpihx.github.io/tutos_live/
-
-Docsify (CDN JS)
-└── Fetches README.md → renders HTML in-browser
-    Fetches _sidebar.md → builds navigation
-    User clicks link → fetches tailscale.md → renders
+ Local machine                GitHub                    Browser
+ ─────────────               ────────               ─────────────────
+  tutos_live/
+  ├── .nojekyll    git push   GitHub Pages           https://kpihx.
+  ├── index.html ──────────▶  serves files  ──────▶  github.io/
+  ├── _sidebar.md             as-is (raw)            tutos_live/
+  ├── README.md                    │                      │
+  └── *.md                         │              Docsify (CDN JS)
+                                   │              fetches .md files
+                                   │              renders HTML
+                                   │              client-side
+                                   ▼                      ▼
+                             No build step          Full site ✅
 ```
 
-Zero build. Zero CI. The CDN JS does all the work client-side.
+### The Jekyll trap (why `.nojekyll` is mandatory)
+
+GitHub Pages runs **Jekyll by default** on every push. Jekyll is a static
+site generator with one silent but critical rule:
+
+```
+Jekyll convention:
+  Any file or folder whose name starts with _ is IGNORED.
+
+                   ┌────────────────────────────────┐
+  Without          │  _sidebar.md  ← IGNORED ❌     │
+  .nojekyll:       │  _navbar.md   ← IGNORED ❌     │
+                   │  index.html   → served ✅       │
+                   └────────────────────────────────┘
+  Result: Docsify starts, tries to fetch _sidebar.md
+          → 404 → no sidebar, no navigation.
+
+                   ┌────────────────────────────────┐
+  With             │  .nojekyll present              │
+  .nojekyll:       │  → Jekyll is DISABLED entirely  │
+                   │  → ALL files served as-is ✅    │
+                   └────────────────────────────────┘
+  Result: Docsify fetches _sidebar.md → sidebar works.
+```
+
+> **`.nojekyll` is a zero-byte file.** Its presence alone disables Jekyll.
+> No content needed — just the file.
 
 ---
 
 ## 🔧 Setup
 
-### 1. Create `index.html`
+### Step 1 — Create `index.html`
 
-This is the only non-Markdown file you need. It tells GitHub Pages "this is a Docsify site" and loads everything from CDN.
+The Docsify bootstrap. One file, no build, everything loaded from CDN.
 
 ```html
 <!DOCTYPE html>
@@ -64,8 +94,21 @@ This is the only non-Markdown file you need. It tells GitHub Pages "this is a Do
   <meta charset="UTF-8">
   <title>Your Site Title</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-darklight-theme@latest/dist/style.min.css"
-        title="docsify-darklight-theme" type="text/css" />
+  <!-- Dark/light theme CSS — title attribute is required for theme switching -->
+  <link rel="stylesheet"
+        href="//cdn.jsdelivr.net/npm/docsify-darklight-theme@latest/dist/style.min.css"
+        title="docsify-darklight-theme"
+        type="text/css" />
+  <style>
+    /* VS Code sidebar layout */
+    .sidebar { display: flex !important; flex-direction: column !important; }
+    .app-name { order: 1 !important; margin-top: 20px !important; font-weight: bold !important; }
+    .search   { order: 2 !important; margin-bottom: 20px !important; }
+    .sidebar-nav { order: 3 !important; flex: 1 !important; }
+    /* Theme toggle button */
+    #docsify-darklight-theme { top: 15px !important; right: 15px !important;
+                               width: 28px !important; height: 28px !important; }
+  </style>
 </head>
 <body>
   <div id="app">Loading...</div>
@@ -73,19 +116,35 @@ This is the only non-Markdown file you need. It tells GitHub Pages "this is a Do
     window.$docsify = {
       name: '🐧 Your Site Name',
       repo: 'https://github.com/yourname/yourrepo',
-      loadSidebar: true,
+      loadSidebar: true,      // reads _sidebar.md for navigation
       subMaxLevel: 2,
       auto2top: true,
-      themeColor: '#007acc',
+      themeColor: '#007acc',  // VS Code blue accent
+      alias: { '/.*/_sidebar.md': '/_sidebar.md' },  // single sidebar for all pages
       search: {
         maxAge: 86400000,
         paths: 'auto',
         placeholder: '🔍 Search...',
         noData: '❌ No results.',
         depth: 6
+      },
+      darklightTheme: {
+        defaultTheme: 'dark',   // start in dark mode
+        dark: {
+          accent: '#007acc',
+          background: '#1e1e1e',
+          sidebarBackground: '#252526',
+          textColor: '#d4d4d4'
+        },
+        light: {
+          accent: '#007acc',
+          background: '#ffffff',
+          textColor: '#333333'
+        }
       }
     }
   </script>
+  <!-- Load order matters: docsify core first, then plugins -->
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify-darklight-theme@latest/dist/index.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
@@ -94,13 +153,29 @@ This is the only non-Markdown file you need. It tells GitHub Pages "this is a Do
 </html>
 ```
 
-> **Dark theme** (VS Code-style): the `docsify-darklight-theme` plugin adds a toggle button. `defaultTheme: 'dark'` sets the initial state. Full config in this repo's `index.html`.
+**Script load order:**
+
+```
+  docsify@4 (core)
+      │
+      ▼
+  docsify-darklight-theme  ← registers theme plugin into docsify
+      │
+      ▼
+  search.min.js            ← registers search plugin
+      │
+      ▼
+  prism-bash.min.js        ← syntax highlighting for bash blocks
+```
+
+> **`title` on the `<link>` tag is not optional.** The darklight theme uses it
+> to identify and swap the stylesheet at runtime. Remove it and the toggle breaks.
 
 ---
 
-### 2. Create `_sidebar.md`
+### Step 2 — Create `_sidebar.md`
 
-Docsify reads this file to build the left-side navigation:
+Docsify fetches this file to build the left navigation panel:
 
 ```markdown
 - **My Site**
@@ -114,128 +189,150 @@ Docsify reads this file to build the left-side navigation:
   - [GitHub](https://github.com/yourname/yourrepo)
 ```
 
-Rules:
-- Indented items become sub-entries
-- Links are relative paths to `.md` files
-- Update this file every time you add a new tutorial
+```
+_sidebar.md structure → rendered panel
+─────────────────────   ───────────────
+- **Section**           ■ Section
+  - [Label](file.md)     └─ Label        ← clickable
+  - [Label](file.md)     └─ Label
+```
+
+Update this file every time you add a new tutorial.
 
 ---
 
-### 3. Preview Locally
+### Step 3 — Create `.nojekyll`  ⚠️ Critical
 
-No Node modules needed globally — use `npx`:
+```bash
+# Zero-byte file — content doesn't matter, presence does
+touch .nojekyll
+```
+
+```
+repo root/
+├── .nojekyll    ← tells GitHub Pages: skip Jekyll, serve everything as-is
+├── index.html
+├── _sidebar.md  ← will be served (Jekyll would have dropped it)
+└── README.md
+```
+
+**Without this file: sidebar is invisible.** Jekyll runs, silently drops
+`_sidebar.md`, Docsify gets a 404 when it tries to fetch it.
+
+---
+
+### Step 4 — Preview Locally
 
 ```bash
 cd ~/Work/tutos_live
 
-# Serve on http://localhost:3000
+# One-shot, no global install needed
 npx docsify-cli serve .
 ```
 
 ```
-Serving /home/kpihx/Work/tutos_live now.
-Listening at http://localhost:3000
+  Serving /home/kpihx/Work/tutos_live now.
+  Listening at http://localhost:3000
+                        │
+              open in browser
+                        │
+          ┌─────────────▼──────────────┐
+          │  sidebar ✅  │  content     │
+          │  _sidebar.md │  README.md  │
+          │  (rendered)  │  (rendered) │
+          └─────────────────────────── ┘
 ```
 
-Open `http://localhost:3000` in your browser. Changes to `.md` files are reflected on reload — no rebuild needed.
-
-> **One-shot, no install:** `npx` downloads `docsify-cli` on first run and caches it. Never commits to your repo.
+> Changes to `.md` files are reflected on browser reload — no rebuild.
+> `npx` caches `docsify-cli` on first run. Never add it to your repo.
 
 ---
 
-### 4. Create the GitHub Repo & Push
+### Step 5 — Create the GitHub Repo & Push
 
 Two approaches — same result, different tools:
 
 ```
-Method A — Classic (git + github.com web UI)
-  git init → create repo on github.com → git remote add → git push
-
-Method B — gh CLI (everything from the terminal, zero browser)
-  gh repo create → git remote add → git push
+  ┌──────────────────────────────────────────────────────┐
+  │  Method A — Classic                                  │
+  │  git init → github.com/new (browser) →              │
+  │  git remote add → git push                          │
+  ├──────────────────────────────────────────────────────┤
+  │  Method B — gh CLI (terminal only, zero browser)     │
+  │  gh repo create → git remote add → git push         │
+  └──────────────────────────────────────────────────────┘
 ```
-
----
 
 #### Method A — Classic: git + github.com
 
 ```bash
-cd ~/Work/tutos_live
-
-# 1. Commit your files
+# 1. Stage and commit everything (including .nojekyll!)
 git add .
 git commit -m "feat: initial Docsify setup"
 ```
 
-Then go to **https://github.com/new** in your browser:
+Open **https://github.com/new** in your browser:
 - Repository name: `tutos_live`
 - Visibility: Public
-- **Do NOT** initialize with README (you already have one)
+- ❌ Do NOT check "Initialize this repository" (you already have files)
 - Click **Create repository**
 
-GitHub shows you the remote URL. Copy the SSH one:
+GitHub shows the remote URL — copy the **SSH** one:
 
 ```bash
-# 2. Add remote (SSH — always)
-git remote add github git@github.com:kpihx/tutos_live.git
+# 2. Wire the remote
+git remote add github git@github.com:yourname/tutos_live.git
 
 # 3. Push
 git push -u github master
 ```
 
----
-
 #### Method B — gh CLI (terminal only)
 
 ```bash
-cd ~/Work/tutos_live
-
-# 1. Commit your files
+# 1. Stage and commit everything (including .nojekyll!)
 git add .
 git commit -m "feat: initial Docsify setup"
 
-# 2. Create repo on GitHub AND get the SSH remote URL
-gh repo create kpihx/tutos_live \
+# 2. Create the repo on GitHub
+gh repo create yourname/tutos_live \
   --public \
-  --description "Ubuntu-focused knowledge base"
+  --description "My Ubuntu live tutorials"
 
-# 3. Add remote manually (gh create does NOT add it automatically)
-git remote add github git@github.com:kpihx/tutos_live.git
+# 3. Add remote (gh create does NOT add it automatically)
+git remote add github git@github.com:yourname/tutos_live.git
 
 # 4. Push
 git push github HEAD
 ```
 
-> **Tip:** `gh repo create` accepts `--clone` to clone immediately, but since you're working from an existing local repo, adding the remote manually is cleaner.
-
 ---
 
-### 5. Enable GitHub Pages
-
-Two methods here as well:
+### Step 6 — Enable GitHub Pages
 
 ```
-Method A — Web UI:  github.com Settings → Pages → point to branch
-Method B — gh API:  one command, zero browser
+  ┌──────────────────────────────────────────────────────┐
+  │  Method A — Web UI                                   │
+  │  Settings → Pages → pick branch → Save              │
+  ├──────────────────────────────────────────────────────┤
+  │  Method B — gh api (one command, zero browser)       │
+  │  gh api repos/.../pages --method POST ...           │
+  └──────────────────────────────────────────────────────┘
 ```
-
----
 
 #### Method A — Web UI
 
-1. Go to `https://github.com/kpihx/tutos_live`
+1. Go to your repo: `https://github.com/yourname/tutos_live`
 2. **Settings** → **Pages** (left sidebar)
 3. Under **Build and deployment**:
-   - Source: **Deploy from a branch**
+   - Source: `Deploy from a branch`
    - Branch: `master` · Folder: `/ (root)`
 4. Click **Save**
 
----
-
-#### Method B — gh api (terminal only, instant)
+#### Method B — gh api (instant, no browser)
 
 ```bash
-gh api repos/kpihx/tutos_live/pages \
+gh api repos/yourname/tutos_live/pages \
   --method POST \
   -f "source[branch]=master" \
   -f "source[path]=/"
@@ -244,20 +341,19 @@ gh api repos/kpihx/tutos_live/pages \
 Response confirms activation:
 ```json
 {
-  "html_url": "https://kpihx.github.io/tutos_live/",
+  "html_url": "https://yourname.github.io/tutos_live/",
   "source": { "branch": "master", "path": "/" },
   "public": true
 }
 ```
 
-Check status later:
+Check status / update source later:
 ```bash
-gh api repos/kpihx/tutos_live/pages
-```
+# Status
+gh api repos/yourname/tutos_live/pages
 
-Change branch or path after the fact:
-```bash
-gh api repos/kpihx/tutos_live/pages \
+# Change branch
+gh api repos/yourname/tutos_live/pages \
   --method PUT \
   -f "source[branch]=main" \
   -f "source[path]=/"
@@ -266,31 +362,68 @@ gh api repos/kpihx/tutos_live/pages \
 After ~1 minute, site is live:
 
 ```
-https://kpihx.github.io/tutos_live/
+  git push
+     │
+     ▼
+  GitHub Pages  (Jekyll disabled by .nojekyll)
+  ├── index.html     → entry point
+  ├── .nojekyll      → disables Jekyll
+  ├── _sidebar.md    → served ✅ (not ignored)
+  └── *.md           → served ✅
+     │
+     ▼
+  https://yourname.github.io/tutos_live/
+  ├── sidebar visible ✅
+  ├── dark/light toggle ✅
+  └── search working ✅
 ```
 
-```
-GitHub Pages
-└── Branch: master, root /
-    ├── index.html   → served as entry point
-    ├── README.md    → Docsify loads as homepage
-    └── *.md         → loaded on demand by Docsify JS
-```
-
-> **No `gh-pages` branch needed.** Serving from `master` root is the simplest setup for a docs-only repo.
-> **For more on `gh`**, see the dedicated tutorial → [gh.md](gh.md)
+> **For more on `gh`**, see → [gh.md](gh.md)
 
 ---
 
 ## 🐛 Debugging
 
-### Site shows raw Markdown instead of rendered HTML
-
-`index.html` is missing or has a syntax error. Verify it exists at repo root and that the `<script>` tag for docsify CDN is present.
-
 ### Sidebar not showing
 
-`_sidebar.md` must be at repo root AND `loadSidebar: true` must be set in `window.$docsify`.
+**Most likely cause: `.nojekyll` missing.**
+
+```bash
+# Check it exists
+ls -la .nojekyll
+
+# Create if missing
+touch .nojekyll
+git add .nojekyll
+git commit -m "fix: add .nojekyll to disable Jekyll"
+git push github HEAD
+```
+
+Wait ~1 min after push, then hard-refresh the browser (`Ctrl+Shift+R`).
+
+Secondary cause: `loadSidebar: true` missing from `window.$docsify`.
+
+### Theme toggle is a blank square / not working
+
+The `title` attribute on the CSS `<link>` tag is missing or wrong:
+
+```html
+<!-- ✅ Correct — title must match exactly -->
+<link rel="stylesheet"
+      href="...docsify-darklight-theme.../style.min.css"
+      title="docsify-darklight-theme"
+      type="text/css" />
+
+<!-- ❌ Wrong — no title → plugin can't find the stylesheet to swap -->
+<link rel="stylesheet" href="...docsify-darklight-theme.../style.min.css" />
+```
+
+Also verify load order: `docsify@4` must load **before** the theme plugin JS.
+
+### Site shows raw Markdown
+
+`index.html` is missing, or the Docsify CDN `<script>` tag has a typo.
+Check the browser console (F12) for 404s.
 
 ### Local preview: port 3000 already in use
 
@@ -298,28 +431,34 @@ GitHub Pages
 npx docsify-cli serve . --port 3001
 ```
 
-### GitHub Pages shows 404
-
-- Check that Pages is enabled (Settings → Pages)
-- Verify branch is `main` and folder is `/` (root)
-- Wait 1-2 minutes after first push — first deploy takes time
-
 ### Search not working locally
 
-Browser security blocks XHR from `file://` — always use `npx docsify-cli serve .` for local preview, never open `index.html` directly.
+Browser security blocks XHR from `file://`. Always use
+`npx docsify-cli serve .` — never open `index.html` directly in the browser.
+
+### GitHub Pages shows 404 after enabling
+
+- Wait 1-2 minutes — first deploy takes time
+- Verify the branch and path in Settings → Pages
+- Check that `index.html` is at repo root (not in a subfolder)
 
 ---
 
 ## ✅ Verification
 
 ```bash
-# Local
+# 1. Local — full feature check
 npx docsify-cli serve .
-# → http://localhost:3000  — navigate, search, theme toggle
+# → sidebar visible, dark toggle works, search works
 
-# Remote (after GitHub Pages enabled)
-curl -s -o /dev/null -w "%{http_code}" https://kpihx.github.io/tutos_live/
+# 2. Remote — HTTP 200
+curl -s -o /dev/null -w "%{http_code}" https://yourname.github.io/tutos_live/
 # → 200
+
+# 3. _sidebar.md reachable (Jekyll check)
+curl -s -o /dev/null -w "%{http_code}" \
+  https://yourname.github.io/tutos_live/_sidebar.md
+# → 200  (would be 404 without .nojekyll)
 ```
 
 ---
@@ -329,3 +468,4 @@ curl -s -o /dev/null -w "%{http_code}" https://kpihx.github.io/tutos_live/
 - [Docsify documentation](https://docsify.js.org)
 - [docsify-darklight-theme](https://github.com/boopathikumar018/docsify-darklight-theme)
 - [GitHub Pages documentation](https://docs.github.com/en/pages)
+- [GitHub CLI (`gh`) full guide](gh.md)
