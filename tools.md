@@ -45,6 +45,25 @@ plocate tailscale.conf
 
 ---
 
+## 🧹 System Maintenance
+
+### clean — Unified Cleanup Suite
+
+Modular disk cleanup system for Ubuntu. Five specialized scripts orchestrated
+by a single entry point, with four flag levels from read-only analysis to deep
+system purge. Covers Snap revisions, package caches (uv, npm, pnpm), Docker,
+AI models (Ollama, HuggingFace), and `~/Work/` project artifacts.
+
+```bash
+~/Work/sh/clean/clean_all.sh --infos    # full analysis (safe, read-only)
+~/Work/sh/clean/clean_all.sh --safe     # weekly safe cleanup
+~/Work/sh/clean/clean_all.sh --purge    # deep clean (prompted)
+```
+
+→ **Full guide:** [clean.md](clean.md) — module breakdown, flag levels, automation via systemd.
+
+---
+
 ## 🌐 Network & Connectivity
 
 ### Tailscale

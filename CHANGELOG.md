@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.0] — 2026-03-17
+
+### Added
+- [x] `clean.md` — Unified Cleanup Suite guide: 5 modules, 4 flag levels, systemd automation
+
+### Changed
+- [x] `_sidebar.md`: emoji labels on all Shell Commands entries; `clean.md` added
+- [x] `README.md`: `clean.md` row in Tutorials table
+- [x] `tools.md`: new `## 🧹 System Maintenance` section with clean entry
+- [x] `sh/`: all 9 tutorials rewritten from French to English with ASCII diagrams [subagent]
+- [x] `~/Work/sh/` git: committed deletion of `tutos/` folder
+
 ## [0.6.0] — 2026-03-17
 
 ### Added
