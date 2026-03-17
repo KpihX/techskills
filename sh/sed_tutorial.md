@@ -1,289 +1,326 @@
-### **Tutoriel Complet sur `sed` : Le Maître de la Transformation de Texte**
+# ✂️ sed — The Stream Text Editor
 
-#### **Introduction : Le Problème Originel**
+## 🎯 The Concrete Problem
 
-Imaginez que vous êtes sur un serveur distant, sans interface graphique. Vous devez modifier un fichier de configuration de 5000 lignes. Votre tâche : commenter toutes les lignes contenant le mot `beta`, remplacer toutes les occurrences de `old_database_ip` par `new_database_ip`, et supprimer les lignes de débogage vides.
+Picture this: you're on a remote server with no GUI. You need to modify a 5,000-line configuration file. Your tasks:
+- Comment out every line containing the word `beta`
+- Replace every occurrence of `old_database_ip` with `new_database_ip`
+- Delete the empty debug lines
 
-Comment feriez-vous ?
+How would you do it?
 
-1.  **L'approche manuelle :** Ouvrir le fichier avec un éditeur comme `vim` ou `nano`. Chercher chaque occurrence, faire la modification, sauvegarder. C'est lent, fastidieux, et vous risquez de faire des erreurs. Si vous devez le faire sur 10 serveurs, c'est un cauchemar.
-2.  **L'approche scriptée :** Vous pourriez écrire un script en Python ou Perl pour lire le fichier ligne par ligne, effectuer les changements et écrire dans un nouveau fichier. C'est une bonne solution, mais elle peut être lourde pour des tâches simples et nécessite de connaître un langage de programmation.
+1. **The manual approach:** Open the file in `vim` or `nano`, hunt down each occurrence, make the edit, save. Slow, error-prone, and if you need to do the same thing on 10 servers — a nightmare.
+2. **The scripted approach:** Write a Python or Perl script to read the file line by line, apply the changes, write a new file. A solid solution, but heavy for simple tasks and requires knowing a programming language.
 
-C'est précisément pour combler ce vide qu'un outil comme `sed` a été créé.
-
-#### **Partie 1 : Le "Pourquoi" - La Philosophie de `sed`**
-
-`sed` est l'acronyme de **S**tream **ED**itor (Éditeur de Flux). Ce nom contient toute sa philosophie :
-
-1.  **Stream (Flux) :** `sed` n'édite pas le fichier directement (par défaut). Il lit le fichier (ou n'importe quelle entrée, comme la sortie d'une autre commande) ligne par ligne, comme un "flux" de données qui passe à travers lui. Pour chaque ligne, il applique un ensemble de règles que vous lui donnez. Puis, il affiche le résultat dans la sortie standard (votre terminal).
-
-    > **Analogie :** Imaginez une chaîne de montage. Les lignes du fichier sont les pièces sur un tapis roulant (`le flux`). `sed` est un bras robotique qui effectue une opération sur chaque pièce (`l'édition`). La pièce modifiée continue son chemin vers la sortie.
-
-2.  **Editor (Éditeur) :** Il est conçu pour effectuer des opérations d'édition : substitution de texte, suppression, insertion, etc.
-
-**Les grands avantages de cette approche :**
-
-*   **Non-destructif :** Comme `sed` écrit sur la sortie standard, votre fichier original reste intact. C'est une sécurité immense. Vous pouvez voir le résultat avant de décider d'écraser le fichier.
-*   **"Pipe-able" :** `sed` s'intègre parfaitement dans la philosophie UNIX. Vous pouvez "tuyauter" (pipe `|`) la sortie d'une commande dans `sed`, et la sortie de `sed` dans une autre commande.
-    ```bash
-    # Exemple : Lister les processus, filtrer avec grep, puis modifier la sortie avec sed
-    ps aux | grep 'nginx' | sed 's/\/usr\/sbin\/nginx/NGINX_PROCESS/'
-    ```
-*   **Scriptable :** Toutes les opérations sont des commandes textuelles. Vous pouvez donc les sauvegarder dans un fichier et les réutiliser, les automatiser, les intégrer dans des scripts shell. C'est l'automatisation à son apogée.
+That's exactly the gap `sed` was built to fill.
 
 ---
 
-#### **Partie 2 : Le "Comment" - La Syntaxe et les Commandes de Base**
+## 💡 Part 1: The "Why" — sed's Philosophy
 
-La structure générale d'une commande `sed` est :
+`sed` stands for **S**tream **ED**itor. The name contains the entire philosophy:
 
-```bash
-sed [OPTIONS] 'script' [fichier...]
+**Stream:** `sed` doesn't edit the file directly (by default). It reads the file — or any input, like the output of another command — line by line, like a data stream flowing through it. For each line, it applies your rules. Then it prints the result to standard output (your terminal).
+
+```
+┌─────────────────────────────────────────────────────┐
+│  File / stdin                                       │
+│       │                                             │
+│       ▼                                             │
+│  ┌─────────┐   line by line                         │
+│  │  sed    │ ──────────────► Apply script rules     │
+│  └─────────┘                       │               │
+│                                    ▼               │
+│                              stdout (terminal)     │
+│                              or redirected file    │
+└─────────────────────────────────────────────────────┘
 ```
 
-*   `[OPTIONS]`: Des options pour changer le comportement (ex: `-i` pour éditer sur place).
-*   `'script'`: C'est le cœur de `sed`. C'est une ou plusieurs commandes d'édition. On l'entoure de guillemets simples `'` pour éviter que le shell n'interprète des caractères spéciaux.
-*   `[fichier...]`: Le ou les fichiers à traiter. Si aucun n'est fourni, `sed` lit l'entrée standard.
+> **Assembly line analogy:** Lines from the file are parts on a conveyor belt (the stream). `sed` is a robotic arm that performs an operation on each part (the editing). The modified part continues down the line to the output.
 
-##### **L'Espace de Travail (Pattern Space)**
+**Editor:** It's designed to perform edit operations: text substitution, deletion, insertion, and more.
 
-Pour chaque ligne lue, `sed` la place dans une zone mémoire appelée "espace de travail". C'est sur cette copie de la ligne que les commandes du script sont appliquées. Une fois toutes les commandes appliquées, `sed` affiche (par défaut) le contenu de l'espace de travail.
+### Why this approach wins
 
-##### **La Commande la plus Importante : `s` (Substitution)**
+- **Non-destructive by default:** `sed` writes to stdout, so your original file stays intact. You can review the result before deciding to overwrite.
+- **Pipe-able:** `sed` integrates perfectly into the UNIX philosophy. You can pipe output from one command into `sed`, and pipe `sed`'s output into another command.
+  ```bash
+  # List processes, filter with grep, then reformat with sed
+  ps aux | grep 'nginx' | sed 's/\/usr\/sbin\/nginx/NGINX_PROCESS/'
+  ```
+- **Scriptable:** Every operation is a text command — save them in a file, reuse them, automate them, integrate them in shell scripts.
 
-C'est 90% de l'utilisation de `sed`. Elle remplace du texte.
+---
 
-**Syntaxe :** `s/motif/remplacement/flags`
+## ⚙️ Part 2: The "How" — Syntax and Core Commands
 
-*   `s` : La commande de substitution.
-*   `/` : Le délimiteur. Vous pouvez utiliser presque n'importe quel autre caractère (`#`, `|`, `:`, etc.), ce qui est très utile si votre texte contient des `/` (comme des chemins de fichiers ou des URLs).
-*   `motif` : Une **expression régulière** (regex) pour trouver le texte à remplacer.
-*   `remplacement` : Le texte par lequel remplacer le `motif`.
-*   `flags` (optionnel) : Pour modifier le comportement.
+General structure:
 
-**Exemple 1 : Remplacer la première occurrence**
+```bash
+sed [OPTIONS] 'script' [file...]
+```
 
-Créons un fichier `exemple.txt` :
+- `[OPTIONS]` — change the behavior (e.g., `-i` to edit in place)
+- `'script'` — one or more editing commands, in single quotes to prevent shell interpretation
+- `[file...]` — file(s) to process; if none provided, `sed` reads stdin
+
+### The Pattern Space
+
+For each line read, `sed` places it in a working memory area called the **pattern space**. All commands in the script operate on this copy of the line. Once all commands have run, `sed` (by default) prints the content of the pattern space.
+
+```
+┌──────────────────────────────────────────────────┐
+│  Input line                                      │
+│       │                                          │
+│       ▼                                          │
+│  [ Pattern Space ]  ← sed commands operate here │
+│       │                                          │
+│       ▼                                          │
+│  Output (stdout) — unless suppressed with -n    │
+└──────────────────────────────────────────────────┘
+```
+
+### The Most Important Command: `s` (Substitution)
+
+This is 90% of what you'll do with `sed`. It replaces text.
+
+**Syntax:** `s/pattern/replacement/flags`
+
+- `s` — the substitution command
+- `/` — the delimiter (you can use almost any character: `#`, `|`, `:`, etc. — very useful when your text contains `/` like file paths or URLs)
+- `pattern` — a **regular expression** to find the text to replace
+- `replacement` — the text to substitute in
+- `flags` (optional) — modify the behavior
+
+**Example 1: Replace the first occurrence**
+
+File `example.txt`:
 ```
 Hello world, this is a test. The world is beautiful.
 ```
 
 ```bash
-sed 's/world/planet/' exemple.txt
-# Sortie :
+sed 's/world/planet/' example.txt
+# Output:
 # Hello planet, this is a test. The world is beautiful.
 ```
-Seul le premier "world" a été remplacé.
 
-**Les `flags` de substitution :**
+Only the first "world" was replaced.
 
-*   `g` (global) : Remplace **toutes** les occurrences sur la ligne, pas seulement la première.
+### Substitution flags
 
-    ```bash
-    sed 's/world/planet/g' exemple.txt
-    # Sortie :
-    # Hello planet, this is a test. The planet is beautiful.
-    ```
+- `g` (global) — replace **all** occurrences on the line, not just the first:
+  ```bash
+  sed 's/world/planet/g' example.txt
+  # Output:
+  # Hello planet, this is a test. The planet is beautiful.
+  ```
 
-*   `i` (ignore-case) : Ignore la casse (majuscules/minuscules) dans le `motif`. (Note: cette option est une extension GNU, elle peut ne pas marcher sur des systèmes non-Linux comme macOS par défaut).
+- `i` (ignore-case) — case-insensitive matching (GNU extension, may not work on non-Linux systems like macOS by default):
+  ```bash
+  echo "Hello" > test.txt
+  sed 's/hello/Hi/i' test.txt
+  # Output: Hi
+  ```
 
-    ```bash
-    # Crée un fichier avec "Hello"
-    echo "Hello" > test.txt
-    sed 's/hello/Hi/i' test.txt
-    # Sortie :
-    # Hi
-    ```
+- **A number** — replace only the Nth occurrence:
+  ```bash
+  sed 's/world/planet/2' example.txt
+  # Output:
+  # Hello world, this is a test. The planet is beautiful.
+  ```
 
-*   **Un nombre :** Remplace seulement la Nième occurrence.
-
-    ```bash
-    sed 's/world/planet/2' exemple.txt
-    # Sortie :
-    # Hello world, this is a test. The planet is beautiful.
-    ```
-
-**Changer le délimiteur :**
+### Changing the delimiter
 
 ```bash
-# Remplacer un chemin de fichier
-# echo "/usr/local/bin" | sed 's/\/usr\/local/\/opt/' # Difficile à lire avec les échappements
-echo "/usr/local/bin" | sed 's#/usr/local#/opt#'    # Beaucoup plus clair !
+# Replace a file path — ugly with backslash escapes:
+# echo "/usr/local/bin" | sed 's/\/usr\/local/\/opt/'
+# Much cleaner with a different delimiter:
+echo "/usr/local/bin" | sed 's#/usr/local#/opt#'
 ```
 
 ---
 
-#### **Partie 3 : Le Ciblage - Adressage**
+## 🎯 Part 3: Targeting Lines — Addressing
 
-La vraie puissance de `sed` est de pouvoir appliquer une commande **uniquement sur certaines lignes**. C'est ce qu'on appelle l'adressage. L'adresse se place juste avant la commande.
+The real power of `sed` is applying a command **only to certain lines**. This is called addressing. The address goes right before the command.
 
-**Syntaxe :** `[adresse]commande`
+**Syntax:** `[address]command`
 
-**1. Adressage par numéro de ligne :**
+### 1. Address by line number
 
-*   Appliquer à une ligne spécifique : `3s/a/b/` (substitue sur la ligne 3 uniquement).
-*   Appliquer à un intervalle de lignes : `5,10d` (supprime les lignes 5 à 10).
-*   D'une ligne jusqu'à la fin : `15,$s/old/new/` (`$` représente la dernière ligne).
+- Apply to a specific line: `3s/a/b/` (substitutes only on line 3)
+- Apply to a range: `5,10d` (deletes lines 5 through 10)
+- From a line to the end: `15,$s/old/new/` (`$` means the last line)
 
-**Exemple :** Fichier `lignes.txt`
+**Example** — File `lines.txt`:
 ```
-ligne 1
-ligne 2 (à changer)
-ligne 3
-ligne 4
-ligne 5 (à changer)
+line 1
+line 2 (change me)
+line 3
+line 4
+line 5 (change me)
 ```
+
 ```bash
-# Changer uniquement la ligne 2
-sed '2s/changer/modifiée/' lignes.txt
+# Change only line 2
+sed '2s/change me/modified/' lines.txt
 
-# Changer les lignes 2 et 5
-sed -e '2s/changer/modifiée/' -e '5s/changer/modifiée/' lignes.txt
-# Ou plus court avec un point-virgule
-sed '2s/changer/modifiée/; 5s/changer/modifiée/' lignes.txt
+# Change lines 2 and 5 — two ways:
+sed -e '2s/change me/modified/' -e '5s/change me/modified/' lines.txt
+sed '2s/change me/modified/; 5s/change me/modified/' lines.txt
 ```
 
-**2. Adressage par motif (expression régulière) :**
+### 2. Address by pattern (regular expression)
 
-C'est encore plus puissant. La commande ne s'applique qu'aux lignes qui correspondent au motif.
+Even more powerful. The command only applies to lines matching the pattern:
 
-*   `/[Mm]otif/d` : Supprime toutes les lignes contenant "Motif" ou "motif".
-*   `/^#/d` : Supprime toutes les lignes commençant par `#` (les commentaires).
-*   `/^$/d` : Supprime toutes les lignes vides.
+- `/[Mm]essage/d` — delete all lines containing "Message" or "message"
+- `/^#/d` — delete all lines starting with `#` (comments)
+- `/^$/d` — delete all blank lines
 
-**Exemple :** Fichier `config.txt`
+**Example** — File `config.txt`:
 ```
-# Activer le cache
+# Enable cache
 enable_cache=true
 
-# Désactiver le debug
+# Disable debug
 # debug_mode=true
 debug_mode=false
 ```
+
 ```bash
-# Commenter la ligne qui active le cache
+# Comment out the line that enables the cache
 sed '/enable_cache=true/s/^/#/' config.txt
-# Sortie :
-# # Activer le cache
-#enable_cache=true
+# Output:
+# # Enable cache
+##enable_cache=true
 # ...
 ```
 
-**3. Adressage par intervalle de motifs :**
+### 3. Address by pattern range
 
-Appliquer une commande d'un motif de début jusqu'à un motif de fin.
+Apply a command from one pattern to another:
 
 ```bash
-sed '/START/,/END/d' mon_fichier.log
-# Supprime la ligne contenant START, celle contenant END, et tout ce qui se trouve entre les deux.
+sed '/START/,/END/d' server.log
+# Deletes the line containing START, the line containing END,
+# and everything in between.
 ```
 
-**4. Inverser l'adresse avec `!`**
+### 4. Negating an address with `!`
 
-Appliquer une commande à **toutes les lignes SAUF** celles qui correspondent à l'adresse.
+Apply a command to **all lines EXCEPT** those matching the address:
 
 ```bash
-sed '/debug/!d' mon_fichier.log
-# Supprime toutes les lignes qui ne contiennent PAS 'debug'. Ne garde que les lignes de debug.
+sed '/debug/!d' server.log
+# Deletes all lines that do NOT contain 'debug'.
+# Keeps only the debug lines.
 ```
 
 ---
 
-#### **Partie 4 : Autres Commandes Utiles**
+## 🔨 Part 4: Other Useful Commands
 
-*   `d` (delete) : Supprime la ligne entière de l'espace de travail. Elle ne sera donc pas affichée.
+- `d` (delete) — removes the entire line from the pattern space; it won't be printed:
+  ```bash
+  # Strip comments and blank lines
+  sed '/^#/d; /^$/d' config.txt
+  ```
 
-    ```bash
-    # Supprimer les commentaires et les lignes vides
-sed '/^#/d; /^$/d' config.txt
-    ```
+- `p` (print) — prints the content of the pattern space. Seems useless since `sed` does that by default — but it reveals its power with `-n`.
 
-*   `p` (print) : Affiche le contenu de l'espace de travail. Cela semble inutile car `sed` le fait déjà par défaut. Mais son pouvoir se révèle avec l'option `-n`.
+  **The `-n` + `p` duo: a `grep` replacement**
 
-    **L'option `-n` et la commande `p` : le duo `grep`**
+  The `-n` option tells `sed` to **NOT** print the pattern space at the end of each cycle. Combined with `p`, you can print **only** the lines you choose:
 
-    L'option `-n` dit à `sed` de **NE PAS** afficher l'espace de travail à la fin de chaque cycle.
-    En combinant `-n` avec la commande `p`, vous pouvez afficher **UNIQUEMENT** les lignes que vous choisissez.
+  ```bash
+  # Simulate `grep 'debug'`
+  sed -n '/debug/p' config.txt
+  # Only lines containing "debug" will be shown.
+  ```
 
-    ```bash
-    # Simuler un `grep 'debug'`
-sed -n '/debug/p' config.txt
-    # Seules les lignes contenant "debug" seront affichées.
-    ```
+- `i` (insert) and `a` (append) — add text:
+  - `i \text to insert` — inserts text **before** the current line
+  - `a \text to append` — appends text **after** the current line
 
-*   `i` (insert) et `a` (append) : Pour ajouter du texte.
-    *   `i \texte à insérer` : Insère le texte **avant** la ligne courante.
-    *   `a \texte à ajouter` : Ajoute le texte **après** la ligne courante.
+  ```bash
+  # Add a line after line 2
+  sed '2a \## NEW LINE ADDED ##' config.txt
+  ```
 
-    ```bash
-    # Ajouter une ligne après la 2ème ligne
-sed '2a \## NOUVELLE LIGNE AJOUTEE ##' config.txt
-    ```
-
-*   `y` (transliterate) : Remplace des caractères un par un. Utile pour changer la casse.
-
-    ```bash
-    # Met tout en majuscules
-    echo "bonjour" | sed 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/'
-    ```
+- `y` (transliterate) — replaces characters one-for-one. Useful for case conversion:
+  ```bash
+  # Convert to uppercase
+  echo "hello world" | sed 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/'
+  ```
 
 ---
 
-#### **Partie 5 : Édition sur Place et Bonnes Pratiques**
+## ⚠️ Part 5: In-Place Editing and Best Practices
 
-Jusqu'à maintenant, nous n'avons pas modifié les fichiers. Pour le faire, on utilise l'option `-i`.
+Until now, we haven't modified any files. To do that, use the `-i` option.
 
-**ATTENTION : L'OPTION `-i` EST DESTRUCTIVE.**
+**WARNING: THE `-i` OPTION IS DESTRUCTIVE.**
 
 ```bash
-# Cette commande MODIFIE config.txt directement. Pas de retour en arrière.
+# This command MODIFIES config.txt directly. No going back.
 sed -i '/^$/d' config.txt
 ```
 
-**Bonne pratique : Créer un backup**
+### Best practice: create a backup
 
-La plupart des versions de `sed` permettent de créer un backup automatique en ajoutant un suffixe à l'option `-i`.
+Most versions of `sed` let you create an automatic backup by adding a suffix to `-i`:
 
 ```bash
-# Modifie config.txt et crée un backup config.txt.bak avec le contenu original
+# Modifies config.txt and creates a backup at config.txt.bak with the original content
 sed -i.bak 's/old/new/g' config.txt
 ```
-**C'est une pratique très fortement recommandée !**
+
+**This is very strongly recommended whenever using `-i`.**
 
 ---
 
-#### **Partie 6 : Concepts Avancés - Pour Aller Plus Loin**
+## 🚀 Part 6: Advanced Concepts — Going Further
 
-`sed` a une deuxième zone mémoire appelée **l'espace de rétention (Hold Space)**. C'est un "presse-papiers" interne.
+`sed` has a second memory area called the **hold space**. Think of it as an internal clipboard.
 
-*   `h` : Copie l'espace de travail **vers** l'espace de rétention (écrase ce qu'il y avait).
-*   `H` : Ajoute l'espace de travail **vers** l'espace de rétention (ajoute à la suite).
-*   `g` : Copie l'espace de rétention **vers** l'espace de travail (écrase ce qu'il y avait).
-*   `G` : Ajoute l'espace de rétention **vers** l'espace de travail (ajoute à la suite).
-*   `x` : Échange le contenu des deux espaces.
+```
+┌────────────────┐         ┌────────────────┐
+│  Pattern Space │         │   Hold Space   │
+│  (current line)│         │  (clipboard)   │
+└────────────────┘         └────────────────┘
+     h → copy to hold            g → copy to pattern
+     H → append to hold          G → append to pattern
+     x → swap the two spaces
+```
 
-Ceci permet des opérations complexes comme inverser l'ordre des lignes d'un fichier (un exercice classique mais complexe) ou déplacer des blocs de texte.
+- `h` — copy pattern space **to** hold space (overwrites)
+- `H` — append pattern space **to** hold space
+- `g` — copy hold space **to** pattern space (overwrites)
+- `G` — append hold space **to** pattern space
+- `x` — exchange the two spaces
 
-**Exemple : Dupliquer chaque ligne**
+This enables complex operations like reversing a file's line order, or moving blocks of text.
+
+**Example: Duplicate every line**
 ```bash
-sed 'h;G' exemple.txt
-# Pour chaque ligne :
-# 1. `h` : la copie dans l'espace de rétention.
-# 2. `G` : ajoute le contenu de l'espace de rétention (qui contient la ligne elle-même) à la fin de l'espace de travail.
-# Résultat :
-# Hello world, this is a test. The world is beautiful.
-# Hello world, this is a test. The world is beautiful.
+sed 'h;G' example.txt
+# For each line:
+# 1. `h` copies it to the hold space.
+# 2. `G` appends the hold space (which contains the same line) to the pattern space.
+# Result: every line appears twice.
 ```
 
 ---
 
-#### **Conclusion**
+## ✅ Conclusion
 
-Vous comprenez maintenant `sed` non plus comme une commande obscure, mais comme un outil de traitement de texte en flux, extrêmement puissant et efficace.
+`sed` is not an obscure command — it's a powerful, efficient stream text processor.
 
-*   Il est **sûr** par défaut.
-*   Il est **rapide** et **léger**.
-*   Il est **universel** (disponible sur presque tous les systèmes UNIX-like).
-*   Il est parfait pour **l'automatisation** de tâches d'édition répétitives.
+- **Safe by default** — your original files are never touched unless you say so
+- **Fast and lightweight** — no interpreter overhead
+- **Universal** — available on virtually every UNIX-like system
+- **Ideal for automation** — scriptable, pipe-able, repeatable
 
-La clé pour maîtriser `sed` est de pratiquer. Commencez par des substitutions simples, puis intégrez l'adressage, et enfin, lorsque vous rencontrerez un problème complexe, souvenez-vous que l'espace de rétention existe pour vous sauver.
+The key to mastering `sed` is practice. Start with simple substitutions, then add addressing, and when you hit a complex problem, remember that the hold space exists to save you.

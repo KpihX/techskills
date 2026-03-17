@@ -1,211 +1,251 @@
-### **Tutoriel Complet sur `awk` : Le Couteau Suisse du Traitement de Texte**
+# 🔧 awk — The Column-Aware Text Processor
 
-#### **Introduction : Le Problème Originel**
+## 🎯 The Concrete Problem
 
-Imaginons un fichier de log `access.log`, où chaque ligne ressemble à ceci :
-`192.168.1.10 - - [10/Jan/2026:10:05:15 +0000] "GET /page.html HTTP/1.1" 200 1542`
-
-Vos tâches :
-1.  Afficher uniquement l'adresse IP et la page demandée pour chaque ligne.
-2.  Calculer le total des octets transférés (l'avant-dernier champ) pour toutes les requêtes.
-3.  Lister toutes les requêtes qui ont renvoyé une erreur 404.
-
-Avec `sed` ou `grep`, c'est compliqué, voire impossible. `grep` peut trouver les lignes avec "404", mais comment extraire et *calculer* une somme ? `sed` peut extraire du texte avec des expressions régulières complexes, mais il n'a aucune notion de "colonne" ou de "champ" et ne sait pas faire d'arithmétique.
-
-C'est là que `awk` entre en scène. Il a été conçu pour comprendre et traiter des données **structurées en colonnes**.
-
-#### **Partie 1 : Le "Pourquoi" - La Philosophie de `awk`**
-
-Le nom `awk` vient de ses créateurs : **A**ho, **W**einberger, et **K**ernighan (le 'K' de "K&R C"). Sa philosophie est radicalement différente de celle de `grep` ou `sed`.
-
-`awk` lit un fichier ligne par ligne (comme les autres), mais pour chaque ligne, il effectue une étape supplémentaire cruciale : il la découpe en **champs** (fields).
-
-**Le modèle de base de `awk` est : `PATERN { ACTION }`**
-
-*   **PATERN (le motif) :** C'est une condition. "Est-ce que cette ligne correspond à ce que je cherche ?". C'est optionnel. Si vous ne mettez pas de motif, l'action s'applique à toutes les lignes.
-*   **ACTION (l'action) :** C'est ce qu'il faut faire si la ligne correspond au motif. C'est un bloc de code. Si vous ne mettez pas d'action, l'action par défaut est d'imprimer la ligne entière (`{ print }`).
-
-**Le fonctionnement implicite de `awk` :**
+I had an `access.log` file where every line looked like this:
 
 ```
-Pour chaque ligne du fichier :
-  Découper la ligne en champs.
-  Est-ce que la ligne correspond au PATERN ?
-    Si oui, alors exécuter l'ACTION.
-Fin de la boucle.
+192.168.1.10 - - [10/Jan/2026:10:05:15 +0000] "GET /page.html HTTP/1.1" 200 1542
 ```
-C'est un véritable petit langage de programmation dédié au traitement de texte.
+
+I needed three things:
+1. Show only the IP address and the requested page for each line.
+2. Calculate the total bytes transferred (the second-to-last field) across all requests.
+3. List every request that returned a 404 error.
+
+With `sed` or `grep`, I was stuck. `grep` could find lines containing "404" — but how do you extract and *calculate* a sum from them? `sed` can extract text using complex regular expressions, but it has no concept of "column" or "field", and it can't do arithmetic.
+
+That's when `awk` stepped in. It was designed from the ground up to understand and process **column-structured data**.
 
 ---
 
-#### **Partie 2 : Le "Comment" - Syntaxe, Champs et Actions de Base**
+## 💡 Part 1: The "Why" — awk's Philosophy
 
-La structure générale :
-`awk 'script' [fichier...]`
+The name `awk` comes from its creators: **A**ho, **W**einberger, and **K**ernighan (the 'K' from "K&R C"). Its philosophy is radically different from `grep` or `sed`.
 
-**Les Champs : La Magie de `$`**
+`awk` reads a file line by line — just like the others — but for each line it performs one extra, crucial step: it **splits the line into fields**.
 
-`awk` stocke les champs découpés dans des variables spéciales numérotées avec un `$`: 
+**The core model of `awk` is: `PATTERN { ACTION }`**
 
-*   `$0` : La ligne entière (l'enregistrement complet).
-*   `$1` : Le premier champ.
-*   `$2` : Le deuxième champ.
-*   ... 
-*   `$N` : Le Nième champ.
+- **PATTERN:** A condition. "Does this line match what I'm looking for?" It's optional — if you omit the pattern, the action applies to every line.
+- **ACTION:** What to do if the line matches. It's a code block. If you omit the action, the default is to print the entire line (`{ print }`).
 
-Par défaut, les champs sont séparés par un ou plusieurs espaces ou tabulations.
+**How awk processes data:**
 
-**Exemple 1 : Afficher des colonnes spécifiques**
-
-Utilisons la sortie de `ls -l` :
 ```
--rw-r--r-- 1 user group 432 Jan 10 10:20 fichier.txt
-drwxr-xr-x 2 user group 4096 Jan 9 09:15 dossier
+┌─────────────────────────────────────────────────┐
+│  For each line in the file:                     │
+│    1. Split the line into fields ($1, $2, ...)  │
+│    2. Does the line match PATTERN?              │
+│         YES → execute ACTION                    │
+│         NO  → skip                             │
+│  After last line: run END block (if any)        │
+└─────────────────────────────────────────────────┘
 ```
-Si nous voulons afficher la taille (5ème champ) et le nom (9ème champ) :
+
+It's a proper little programming language dedicated to text processing.
+
+---
+
+## ⚙️ Part 2: The "How" — Syntax, Fields, and Basic Actions
+
+General structure:
+
+```bash
+awk 'script' [file...]
+```
+
+### The Fields: The Magic of `$`
+
+`awk` stores the split fields in special numbered variables prefixed with `$`:
+
+- `$0` — the entire line (the full record)
+- `$1` — the first field
+- `$2` — the second field
+- `$N` — the Nth field
+
+By default, fields are separated by one or more spaces or tabs.
+
+**Example 1: Print specific columns**
+
+Take the output of `ls -l`:
+
+```
+-rw-r--r-- 1 user group  432 Jan 10 10:20 report.txt
+drwxr-xr-x 2 user group 4096 Jan  9 09:15 backups
+```
+
+To display the size (5th field) and the name (9th field):
+
 ```bash
 ls -l | awk '{ print $5, $9 }'
-# Sortie :
-# 432 fichier.txt
-# 4096 dossier
+# Output:
+# 432 report.txt
+# 4096 backups
 ```
-**Qu'est-il arrivé ?**
-Pour chaque ligne de `ls -l`, `awk` a exécuté l'action `{ print $5, $9 }`. La virgule dans `print` ajoute un séparateur de sortie par défaut (un espace).
+
+The comma in `print` adds the default output separator (a space).
 
 ---
 
-#### **Partie 3 : Le Pouvoir des `PATERN` - Filtrer les Lignes**
+## 🎯 Part 3: The Power of PATTERN — Filtering Lines
 
-**1. Filtrage par expression régulière :**
+### 1. Filtering with a regular expression
 
-Comme `grep`, vous pouvez filtrer les lignes qui correspondent à une regex.
+Like `grep`, you can filter lines that match a regex:
 
 ```bash
-# Afficher la taille et le nom uniquement pour les dossiers (lignes commençant par 'd')
+# Show size and name only for directories (lines starting with 'd')
 ls -l | awk '/^d/ { print $5, $9 }'
-# Sortie :
-# 4096 dossier
+# Output:
+# 4096 backups
 ```
 
-**2. Filtrage par comparaison de champs :**
+### 2. Filtering with field comparisons
 
-C'est là que `awk` surpasse de loin les autres outils. Vous pouvez utiliser des opérateurs de comparaison (`==`, `!=`, `>`, `<`, `>=`, `<=`) sur n'importe quel champ.
+This is where `awk` leaves every other tool behind. You can use comparison operators (`==`, `!=`, `>`, `<`, `>=`, `<=`) on any field:
 
 ```bash
-# Afficher les fichiers de plus de 1000 octets
+# Show files larger than 1000 bytes
 ls -l | awk '$5 > 1000 { print $5, $9 }'
 
-# Résoudre notre problème de log : trouver les erreurs 404
-# Le code de statut HTTP est le 9ème champ dans notre exemple de log
+# Solve our log problem: find all 404 errors
+# HTTP status code is the 9th field in our log format
 awk '$9 == 404 { print $0 }' access.log
 ```
 
-**3. Combiner les motifs :**
+### 3. Combining patterns
 
-Utilisez `&&` (ET) et `||` (OU) pour des filtres complexes.
+Use `&&` (AND) and `||` (OR) for complex filters:
 
 ```bash
-# Erreurs 404 venant d'une IP spécifique
-awk '$1 == "192.168.1.50" && $9 == 404 { print $7 }' access.log # Affiche la page
+# 404 errors coming from a specific IP
+awk '$1 == "192.168.1.50" && $9 == 404 { print $7 }' access.log
 ```
 
 ---
 
-#### **Partie 4 : Le Pouvoir des `ACTION` - Variables, Calculs et Blocs Spéciaux**
+## 🧮 Part 4: The Power of ACTION — Variables, Calculations, and Special Blocks
 
-**1. Les variables et les calculs :**
+### 1. Variables and arithmetic
 
-`awk` peut déclarer des variables et effectuer des opérations arithmétiques.
+`awk` can declare variables and perform arithmetic operations.
 
-**Exemple : Calculer l'espace total utilisé**
+**Example: Calculate total disk space used**
+
 ```bash
-ls -l | awk '{ total += $5 } END { print "Total:", total, "octets" }'
+ls -l | awk '{ total += $5 } END { print "Total:", total, "bytes" }'
 ```
-**Analyse de cette commande magique :**
-*   `{ total += $5 }` : Pour chaque ligne, on ajoute la valeur du 5ème champ (la taille) à une variable que nous avons appelée `total`. `awk` initialise `total` à 0 automatiquement.
-*   `END { ... }` : C'est un **bloc spécial**. Il s'exécute **une seule fois**, après que toutes les lignes ont été lues. C'est l'endroit parfait pour afficher un résultat final.
 
-**2. Les blocs `BEGIN` et `END` :**
+Breaking this down:
+- `{ total += $5 }` — for every line, add the 5th field value (the size) to a variable called `total`. `awk` initializes it to 0 automatically.
+- `END { ... }` — a **special block** that runs **once**, after all lines are read. Perfect for printing a final result.
 
-*   `BEGIN { ... }` : S'exécute **avant** la lecture de la première ligne. Idéal pour initialiser des variables ou afficher un en-tête.
-*   `END { ... }` : S'exécute **après** la lecture de la dernière ligne. Idéal pour les totaux, les moyennes, etc.
+### 2. `BEGIN` and `END` blocks
+
+```
+Timeline of awk execution:
+───────────────────────────────────────────────────
+ BEGIN { }     ← runs ONCE before reading any line
+   │
+   ▼
+ PATTERN { ACTION }   ← runs for EACH line
+   │
+   ▼
+ END { }       ← runs ONCE after the last line
+───────────────────────────────────────────────────
+```
 
 ```bash
 awk 'BEGIN { print "IP\tPAGE" } { print $1, $7 }' access.log
 ```
 
-**3. Les variables intégrées (Built-in Variables) :**
+### 3. Built-in variables
 
-`awk` fournit des variables très utiles :
-*   `NR` (Number of Record) : Le numéro de la ligne courante (depuis le début de tous les fichiers).
-*   `NF` (Number of Fields) : Le nombre de champs dans la ligne courante. Très utile !
-*   `$NF` : La valeur du **dernier champ**. Extrêmement pratique.
-*   `FS` (Field Separator) : Le séparateur de champ (par défaut, l'espace).
-*   `OFS` (Output Field Separator) : Le séparateur de champ en sortie (par défaut, l'espace).
+`awk` provides very useful built-in variables:
 
-**Exemple : Traiter un fichier CSV**
+| Variable | Meaning |
+|----------|---------|
+| `NR` | Number of Records — the current line number (across all files) |
+| `NF` | Number of Fields — count of fields in the current line |
+| `$NF` | The **last field** — extremely handy |
+| `FS` | Field Separator (default: whitespace) |
+| `OFS` | Output Field Separator (default: space) |
 
-Les fichiers CSV utilisent la virgule comme séparateur. On peut le dire à `awk` avec l'option `-F`.
+**Example: Processing a CSV file**
 
-Fichier `utilisateurs.csv`:
-`1,Alice,France`
-`2,Bob,USA`
-`3,Charlie,France`
+CSV files use a comma as separator. Tell `awk` with the `-F` option:
 
-```bash
-# Afficher le nom des utilisateurs français
-awk -F',' '$3 == "France" { print $2 }' utilisateurs.csv
-# Sortie :
-# Alice
-# Charlie
+File `users.csv`:
+```
+1,alice,France
+2,bob,USA
+3,charlie,France
 ```
 
-**4. Les tableaux associatifs : La fonctionnalité ultime**
+```bash
+# Display the names of French users
+awk -F',' '$3 == "France" { print $2 }' users.csv
+# Output:
+# alice
+# charlie
+```
 
-`awk` supporte les tableaux associatifs (comme les dictionnaires Python), où les indices peuvent être des chaînes de caractères. C'est parfait pour compter des choses.
+### 4. Associative arrays: the ultimate feature
 
-**Exemple : Compter le nombre de requêtes par code de statut**
+`awk` supports associative arrays (like Python dictionaries), where indices can be strings. Perfect for counting things.
+
+**Example: Count requests per HTTP status code**
+
 ```bash
 awk '{ counts[$9]++ } END { for (code in counts) print code, counts[code] }' access.log
 ```
-**Analyse :**
-*   `{ counts[$9]++ }` : Pour chaque ligne, on utilise le code de statut (`$9`) comme clé du tableau `counts`. On incrémente sa valeur. Si la clé n'existe pas, `awk` la crée.
-*   `END { ... }` : À la fin, on parcourt le tableau `counts` et on affiche chaque clé (le code statut) et sa valeur (le nombre d'occurrences).
+
+What happens:
+- `{ counts[$9]++ }` — for each line, use the status code (`$9`) as an array key and increment its value. If the key doesn't exist yet, `awk` creates it.
+- `END { ... }` — after reading everything, iterate through `counts` and print each key (status code) with its value (occurrence count).
 
 ---
 
-#### **Partie 5 : `awk` en tant que Langage de Script**
+## 📜 Part 5: awk as a Script Language
 
-Pour des logiques complexes, vous pouvez écrire votre script dans un fichier et l'exécuter avec l'option `-f`.
+For complex logic, write your script in a file and run it with the `-f` option.
 
-Fichier `mon_script.awk` :
+File `analyze.awk`:
 ```awk
-# C'est un commentaire
+# This is a comment
 BEGIN {
   FS = ","
-  print "Analyse des utilisateurs..."
+  print "Analyzing users..."
 }
 
 $3 == "France" {
-  francais++
+  french_count++
 }
 
 END {
-  printf "Il y a %d utilisateurs français sur un total de %d lignes.\n", francais, NR
+  printf "There are %d French users out of %d total lines.\n", french_count, NR
 }
 ```
 
-Exécution :
-`awk -f mon_script.awk utilisateurs.csv`
+Run it:
+```bash
+awk -f analyze.awk users.csv
+```
 
 ---
 
-#### **Conclusion : Quand utiliser `awk` ?**
+## ✅ Conclusion: When to use awk?
 
-`awk` est l'outil à dégainer lorsque vos données ont une structure, même simple.
+`awk` is the tool to reach for when your data has structure — even a simple one.
 
-*   **`grep`** est pour trouver des lignes.
-*   **`sed`** est pour éditer des lignes.
-*   **`awk`** est pour extraire, filtrer, manipuler et calculer des données à partir de **champs** au sein de ces lignes.
+```
+┌─────────┬──────────────────────────────────────────────┐
+│  grep   │ finds lines                                  │
+│  sed    │ edits lines                                  │
+│  awk    │ extracts, filters, manipulates, computes     │
+│         │ data from FIELDS within those lines          │
+└─────────┴──────────────────────────────────────────────┘
+```
 
-Il remplace avantageusement des scripts Python/Perl/Ruby pour une multitude de tâches d'analyse de logs, de traitement de CSV, ou de reformatage de données. Sa syntaxe est dense mais incroyablement expressive. Une fois que vous maîtrisez le concept `PATERN { ACTION }` et le pouvoir des champs, `awk` devient l'un des outils les plus puissants de votre arsenal en ligne de commande.
+`awk` cleanly replaces Python/Perl/Ruby scripts for a huge range of tasks: log analysis, CSV processing, data reformatting. Its syntax is dense but incredibly expressive. Once you internalize `PATTERN { ACTION }` and the power of fields, `awk` becomes one of the sharpest tools in your command-line arsenal.

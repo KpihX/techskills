@@ -1,74 +1,85 @@
-### **Tutoriel Complet sur `ps` : L'Art d'Inspecter les Processus**
+# 🔬 ps — The Art of Inspecting Processes
 
-#### **Introduction : Le Problème Originel**
+## 🎯 The Concrete Problem
 
-Votre ordinateur ou votre serveur exécute des dizaines, voire des centaines de programmes en même temps. Un programme en cours d'exécution est appelé un **processus**.
+Your computer or server runs dozens — sometimes hundreds — of programs simultaneously. A running program is called a **process**.
 
-Maintenant, imaginez ces situations :
-*   Votre serveur est soudainement très lent. Un processus consomme-t-il 100% du CPU ?
-*   Vous avez lancé un script en arrière-plan. Est-il toujours en train de tourner ?
-*   Le serveur web ne répond plus. Le processus `nginx` ou `apache2` est-il même démarré ?
-*   Vous voyez une commande suspecte et vous voulez savoir qui l'a lancée et depuis quand.
+Now imagine these situations:
 
-Pour répondre à ces questions, vous avez besoin d'un moyen de lister les processus en cours et d'obtenir des informations à leur sujet. C'est exactement le rôle de `ps` (de l'anglais **P**rocess **S**tatus).
+- Your server suddenly slows to a crawl. Is a process consuming 100% CPU?
+- You launched a script in the background. Is it still running?
+- The web server isn't responding. Is the `nginx` or `apache2` process even started?
+- You see a suspicious command and want to know who launched it and when.
 
-**`ps` vs `top`/`htop` : La différence clé**
-Pensez à `ps` comme à un **photographe**. Il prend un **cliché instantané** de l'état des processus à un moment T et vous le présente. `top` et `htop`, eux, sont des **cameramen** : ils filment l'activité des processus en continu et rafraîchissent l'affichage en temps réel.
+To answer these questions, you need a way to list active processes and get information about them. That's exactly the role of `ps` (short for **P**rocess **S**tatus).
 
----
+### ps vs top/htop: The key difference
 
-#### **Partie 1 : Le "Pourquoi" - La Philosophie (et la Confusion) de `ps`**
-
-La mission de `ps` est simple : afficher des informations sur les processus actifs. Cependant, au fil de l'histoire des systèmes UNIX, différentes versions de `ps` ont vu le jour, chacune avec sa propre syntaxe. C'est la source de la confusion.
-
-Il existe principalement **trois styles d'options** pour `ps` :
-
-1.  **Style UNIX (ou System V) :** Les options sont précédées d'un tiret `-`.
-    *   Exemple : `ps -ef`
-
-2.  **Style BSD :** Les options n'ont **pas** de tiret.
-    *   Exemple : `ps aux`
-
-3.  **Style GNU "long" :** Les options sont précédées de deux tirets `--`.
-    *   Exemple : `ps --forest`
-
-La bonne nouvelle ? Sur la plupart des systèmes Linux modernes, ces styles peuvent coexister. La mauvaise nouvelle ? Cela peut rendre la lecture des commandes d'autrui difficile. La meilleure approche est de mémoriser les deux invocations les plus courantes et de comprendre ce que chacune fait.
+```
+ps      → snapshot  📷  Takes a photograph of process state at a given moment T
+top     → live feed 🎥  Films process activity continuously and refreshes in real time
+htop    → live feed 🎥  Same as top, but with a better user interface
+```
 
 ---
 
-#### **Partie 2 : Les Deux Commandes que Vous Devez Absolument Connaître**
+## 💡 Part 1: The "Why" — ps's Philosophy (and its Confusion)
 
-Oubliez la myriade d'options pour l'instant. 99% du temps, vous utiliserez l'une de ces two commandes.
+`ps`'s mission is straightforward: display information about active processes. However, over the history of UNIX systems, different versions of `ps` emerged — each with its own syntax. That's the source of the confusion.
 
-##### **1. `ps aux` (Style BSD)**
+There are three main **option styles** for `ps`:
 
-C'est probablement la commande `ps` la plus populaire.
+1. **UNIX style (System V):** Options are preceded by a dash `-`.
+   - Example: `ps -ef`
 
-*   `a` : Affiche les processus de **tous** les utilisateurs, pas seulement les vôtres.
-*   `u` : Affiche des informations détaillées dans un format "orienté **u**tilisateur".
-*   `x` : Affiche aussi les processus qui ne sont pas attachés à un terminal (les "daemons" ou services qui tournent en arrière-plan).
+2. **BSD style:** Options have **no** dash.
+   - Example: `ps aux`
 
-**Sortie typique de `ps aux` :**
+3. **GNU long style:** Options are preceded by two dashes `--`.
+   - Example: `ps --forest`
+
+The good news: on most modern Linux systems, these styles can coexist. The bad news: it can make reading other people's commands tricky. The best approach is to memorize the two most common invocations and understand what each does.
+
+---
+
+## 🔨 Part 2: The Two Commands You Absolutely Must Know
+
+Forget the myriad options for now. 99% of the time, you'll use one of these two.
+
+### 1. `ps aux` (BSD style)
+
+Probably the most popular `ps` command.
+
+- `a` — show processes of **all** users, not just yours
+- `u` — display detailed info in a **u**ser-oriented format
+- `x` — also show processes not attached to a terminal (the background daemons / services)
+
+**Typical `ps aux` output:**
 ```
 USER         PID  %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
 root           1   0.0  0.1 169324 11332 ?        Ss   Jan09   0:02 /sbin/init
 www-data     850   0.2  0.5 834572 45120 ?        Sl   Jan09   5:30 nginx: worker process
 kpihx       2150   0.0  0.2 229892 21888 pts/0    Ss   10:30   0:00 -zsh
 ```
-**Les colonnes les plus importantes :**
-*   `USER` : L'utilisateur qui a lancé le processus.
-*   `PID` : **Process ID**. C'est le numéro d'identification unique du processus. C'est ce que vous utiliserez pour "tuer" (kill) un processus.
-*   `%CPU` / `%MEM` : Le pourcentage de CPU et de mémoire vive (RAM) utilisé par le processus. **Idéal pour trouver les processus gourmands.**
-*   `COMMAND` : La commande qui a été exécutée pour lancer le processus.
 
-##### **2. `ps -ef` (Style UNIX)**
+**The most important columns:**
 
-C'est l'autre grand classique, souvent préféré par les administrateurs système "à l'ancienne".
+| Column | Meaning |
+|--------|---------|
+| `USER` | The user who launched the process |
+| `PID` | **Process ID** — the unique identifier. You'll use this to kill the process. |
+| `%CPU` | CPU percentage consumed — **ideal for finding resource hogs** |
+| `%MEM` | RAM percentage consumed |
+| `COMMAND` | The command that was executed to start the process |
 
-*   `-e` : Affiche **tous** (`every`) les processus.
-*   `-f` : Affiche au format "complet" (`full`), qui a l'avantage de montrer la relation parent-enfant.
+### 2. `ps -ef` (UNIX style)
 
-**Sortie typique de `ps -ef` :**
+The other classic — often preferred by "old-school" sysadmins.
+
+- `-e` — show **every** process (equivalent to `a` + `x`)
+- `-f` — show in "full" format, which has the advantage of revealing parent-child relationships
+
+**Typical `ps -ef` output:**
 ```
 UID          PID    PPID  C STIME TTY          TIME CMD
 root           1       0  0 Jan09 ?        00:00:02 /sbin/init
@@ -76,99 +87,130 @@ root         849       1  0 Jan09 ?        00:00:00 nginx: master process /usr/s
 www-data     850     849  0 Jan09 ?        00:05:30 nginx: worker process
 kpihx       2150    2149  0 10:30 pts/0    00:00:00 -zsh
 ```
-**Les colonnes les plus importantes ici :**
-*   `UID` : L'utilisateur (sous forme d'ID numérique).
-*   `PID` : L'ID du processus (comme avant).
-*   `PPID` : **Parent Process ID**. C'est l'ID du processus qui a lancé celui-ci. **C'est la grande force de cette vue.** On voit ici que le processus `nginx: master` (PID 849) a lancé le `worker` (PID 850).
-*   `CMD` : La commande (comme avant).
 
-**Lequel choisir ?**
-*   Utilisez `ps aux` pour une vue rapide, orientée "ressources" (qui consomme quoi ?).
-*   Utilisez `ps -ef` pour une vue "système", pour comprendre la hiérarchie et les dépendances entre processus.
+**Key columns here:**
+
+| Column | Meaning |
+|--------|---------|
+| `UID` | The user |
+| `PID` | The process ID (same as before) |
+| `PPID` | **Parent Process ID** — the ID of the process that spawned this one |
+| `CMD` | The command |
+
+`PPID` is the big advantage of this view. You can see that `nginx: master` (PID 849) spawned the `worker` (PID 850).
+
+```
+                  PID 849  nginx: master
+                      │
+                      └──► PID 850  nginx: worker  (PPID = 849)
+```
+
+### Which one to use?
+
+```
+ps aux   → resource view  — who is consuming what?
+ps -ef   → system view    — understand process hierarchy and dependencies
+```
 
 ---
 
-#### **Partie 3 : Personnaliser la Sortie - L'option `-o`**
+## 🎛️ Part 3: Customizing Output — The `-o` Option
 
-Vous n'êtes pas limité aux formats par défaut. L'option `-o` (ou `o` en style BSD) vous permet de choisir exactement les colonnes que vous voulez voir.
+You're not limited to the default formats. The `-o` option (or `o` in BSD style) lets you choose exactly which columns you want:
 
 ```bash
-# Afficher uniquement le PID, l'utilisateur, et la commande de tous les processus
+# Show only PID, user, and command for all processes
 ps -eo pid,user,comm
 
-# L'exemple ultime : trouver les 5 processus les plus gourmands en mémoire
+# The ultimate example: find the 5 most memory-hungry processes
 ps -eo pid,user,%mem,comm --sort=-%mem | head -n 6
 ```
-**Analyse :**
-*   `-eo pid,user,%mem,comm` : On demande 4 colonnes spécifiques.
-*   `--sort=-%mem` : On trie (`sort`) la sortie par la colonne `%mem`. Le `-` indique un tri descendant (du plus grand au plus petit).
-*   `| head -n 6` : On envoie le résultat à `head` pour ne garder que les 6 premières lignes (1 pour l'en-tête + 5 processus).
+
+Breaking this down:
+- `-eo pid,user,%mem,comm` — request 4 specific columns
+- `--sort=-%mem` — sort by the `%mem` column; the `-` means descending (largest first)
+- `| head -n 6` — pipe to `head` to keep only 6 lines (1 header + 5 processes)
 
 ---
 
-#### **Partie 4 : `ps` et `grep` : Le Duo Incontournable (et ses pièges)**
+## 🔗 Part 4: ps and grep — The Indispensable Duo (and its Pitfall)
 
-La tâche la plus courante est de trouver le PID d'un processus spécifique. La méthode classique est de combiner `ps` avec `grep`.
+The most common task: find the PID of a specific process. The classic method is combining `ps` with `grep`.
 
 ```bash
 ps aux | grep "nginx"
-# Sortie :
-# www-data     850     0.2  0.5 834572 45120 ?        Sl   Jan09   5:30 nginx: worker process
-# kpihx       2300     0.0  0.0  12345   880 pts/0    S+   11:00   0:00 grep "nginx"
+# Output:
+# www-data     850     0.2  0.5 834572 45120 ?  Sl  Jan09  5:30 nginx: worker process
+# kpihx       2300     0.0  0.0  12345   880 pts/0  S+ 11:00  0:00 grep "nginx"
 ```
-**Le Piège :** Remarquez que `grep` se trouve lui-même dans la liste ! La commande `grep "nginx"` contient le mot "nginx".
 
-**L'astuce classique pour éviter ça :**
+**The trap:** `grep` shows itself in the list! The command `grep "nginx"` contains the word "nginx".
+
+**The classic workaround:**
 ```bash
 ps aux | grep "[n]ginx"
 ```
-L'expression régulière `[n]ginx` correspond bien à "nginx", mais la chaîne de caractères de la commande `grep` elle-même est maintenant `grep "[n]ginx"`, qui ne correspond plus.
 
-**La méthode moderne et plus propre : `pgrep`**
-L'outil `pgrep` est fait pour ça !
+The regex `[n]ginx` matches "nginx", but the `grep` command itself is now `grep "[n]ginx"`, which no longer self-matches.
+
+**The modern, cleaner approach: `pgrep`**
+
+`pgrep` was built exactly for this:
 ```bash
-# Trouver le PID de nginx
+# Find the PID of nginx
 pgrep nginx
 
-# Afficher le PID et la commande complète
+# Show PID and full command line
 pgrep -a nginx
 ```
-En général, préférez `pgrep` quand vous voulez juste trouver un processus.
+
+Prefer `pgrep` when you just want to find a process.
 
 ---
 
-#### **Partie 5 : Exemples Pratiques et Avancés**
+## 🚀 Part 5: Practical and Advanced Examples
 
-**1. Voir l'arborescence des processus :**
-Pour comprendre qui a lancé quoi, la vue en arbre est fantastique.
+### 1. See the process tree
+
+To understand who launched what, the tree view is fantastic:
 ```bash
 ps axf
-# ou, avec la vue -ef
+# or, with the -ef view:
 ps -ef --forest
 ```
 
-**2. Tuer un processus :**
-Le flux de travail classique : trouver, puis tuer.
+Output (showing hierarchy):
+```
+/sbin/init
+  └── nginx: master process
+        └── nginx: worker process
+  └── -zsh
+        └── ps -ef --forest
+```
+
+### 2. The classic kill workflow
+
+Find it, then kill it:
 ```bash
-# 1. Trouver le PID du script qui pose problème
-ps aux | grep "script_fou.py"
+# 1. Find the PID of the problematic script
+ps aux | grep "runaway_script.py"
 
-# 2. Tuer le processus avec la commande kill
-kill 12345  # Remplacez 12345 par le PID trouvé
+# 2. Kill the process
+kill 12345  # Replace 12345 with the actual PID
 
-# Ou encore mieux, avec pkill (qui combine pgrep et kill)
-pkill -f "script_fou.py"
+# Or better yet, with pkill (combines pgrep + kill)
+pkill -f "runaway_script.py"
 ```
 
 ---
 
-#### **Conclusion**
+## ✅ Conclusion
 
-`ps` est votre fenêtre sur l'âme de votre système. Il vous dit ce qui est en cours, qui l'a lancé, et comment ça se comporte.
+`ps` is your window into the soul of your system. It tells you what's running, who launched it, and how it's behaving.
 
-*   Retenez les deux commandes reines : `ps aux` (vue ressources) et `ps -ef` (vue hiérarchique).
-*   N'oubliez jamais sa nature d'**instantané**, par opposition à la vue en direct de `top`.
-*   Apprenez à le combiner avec `grep`, `sort`, `head` et `kill` pour une administration système efficace.
-*   Pour des tâches simples de recherche, envisagez les outils modernes comme `pgrep` et `pkill` qui sont plus directs et moins sujets aux erreurs.
+- Remember the two key commands: `ps aux` (resource view) and `ps -ef` (hierarchical view)
+- Never forget its **snapshot** nature — it's a photo, not a live feed like `top`
+- Learn to combine it with `grep`, `sort`, `head`, and `kill` for effective system administration
+- For simple process lookups, prefer modern tools like `pgrep` and `pkill` — they're more direct and less error-prone
 
-Avec `ps` dans votre arsenal, un système lent ou un processus bloqué n'est plus une boîte noire, mais un problème que vous pouvez diagnostiquer et résoudre.
+With `ps` in your arsenal, a slow system or a hung process is no longer a black box — it's a problem you can diagnose and solve.

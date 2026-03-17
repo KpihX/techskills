@@ -1,144 +1,199 @@
-### **Tutoriel Complet sur `tee` : Le Maître de la Bifurcation de Flux**
+# 🔀 tee — The Stream Splitter
 
-#### **Introduction : Le Problème Originel**
+## 🎯 The Concrete Problem
 
-Imaginez que vous exécutez un script d'installation ou une longue compilation qui dure 20 minutes. Vous voulez absolument voir ce qui se passe à l'écran en temps réel pour détecter d'éventuelles erreurs, mais vous voulez aussi sauvegarder toute la sortie dans un fichier de log pour l'analyser plus tard ou l'envoyer à un collègue.
+I was running a long compilation — 20 minutes of output streaming past. I needed two things at once:
 
-Comment feriez-vous ?
+1. Watch the output **live** to catch any errors as they happened.
+2. Save everything to a log file to share with a colleague later.
 
-1.  **L'approche par redirection standard (`>`) :** 
-    ```bash
-    ./mon_script.sh > install.log
-    ```
-    Le problème ? Vous ne voyez plus rien à l'écran. Vous devez attendre la fin ou ouvrir un autre terminal pour faire un `tail -f install.log`. C'est frustrant.
+```bash
+# Attempt 1: just redirect to a file
+./build.sh > build.log
+```
 
-2.  **L'approche par copier-coller :**
-    Laisser le script finir, puis copier tout le contenu de votre terminal dans un fichier. C'est archaïque, limité par la taille du buffer de votre terminal, et impossible à automatiser.
+Problem: I see nothing on screen. I had to wait 20 minutes in the dark, or open a second terminal and `tail -f build.log`. Frustrating.
 
-C'est ici qu'intervient `tee`.
+```bash
+# Attempt 2: copy-paste from terminal scrollback
+# → limited by terminal buffer size, impossible to automate
+```
 
-#### **Partie 1 : Le "Pourquoi" - La Philosophie de `tee`**
-
-La commande `tee` tire son nom d'une pièce de plomberie : le **raccord en T**. Sa philosophie est simple mais cruciale : **la bifurcation**.
-
-1.  **Le Raccord en T :** Tout comme un raccord de tuyauterie prend un flux d'eau et le divise en deux directions, la commande `tee` prend l'entrée standard (`stdin`) et la copie vers deux destinations simultanément :
-    *   La **sortie standard** (`stdout`), c'est-à-dire votre terminal.
-    *   Un ou plusieurs **fichiers**.
-
-    > **Analogie :** Imaginez un greffier dans un tribunal. Il écoute les débats (`le flux`). Tout en laissant les gens parler (le son continue vers l'audience), il écrit simultanément tout ce qui est dit dans son registre (`le fichier`).
-
-**Les grands avantages de cette approche :**
-
-*   **Visibilité et Persistance :** Vous gardez un œil sur l'exécution tout en garantissant une trace écrite.
-*   **Maillon de Chaîne :** Comme `tee` renvoie ce qu'il reçoit vers `stdout`, il peut être inséré n'importe où au milieu d'un pipeline sans l'interrompre.
-*   **Élévation de Privilèges :** C'est l'un des moyens les plus sûrs d'écrire dans un fichier protégé par `root` tout en restant dans un pipeline utilisateur.
+That's when `tee` came to the rescue.
 
 ---
 
-#### **Partie 2 : Le "Comment" - La Syntaxe et l'Usage de Base**
+## 💡 Part 1: The "Why" — tee's Philosophy
 
-La structure générale d'une commande `tee` est :
+The command `tee` takes its name from a plumbing fitting: the **T-shaped pipe connector**. Its philosophy is simple but essential: **bifurcation**.
 
-```bash
-commande | tee [OPTIONS] [FICHIER...]
+```
+Without tee:
+─────────────────────────────────────────────
+source_command ──────────────► stdout (terminal)
+                               OR
+source_command ──────────────► file
+                               (but not both!)
+
+With tee:
+─────────────────────────────────────────────
+                          ┌──► stdout (terminal)  ← you see it live
+source_command ──► tee ──┤
+                          └──► file(s)            ← saved for later
+─────────────────────────────────────────────
 ```
 
-*   `commande |`: `tee` lit presque toujours depuis un tube (pipe).
-*   `[OPTIONS]`: Pour modifier la façon d'écrire (ex: ajouter au lieu d'écraser).
-*   `[FICHIER...]`: Le nom du ou des fichiers où sauvegarder la sortie.
+> **Courtroom analogy:** Imagine a court clerk listening to the proceedings (the stream). While the speakers continue talking (sound still reaches the audience), the clerk simultaneously writes everything down in the record (the file). Two destinations, one source.
 
-##### **L'usage le plus simple**
+### Why this matters
 
-```bash
-ls -l | tee liste.txt
-```
-Ici, la liste des fichiers s'affiche dans votre terminal ET est sauvegardée dans `liste.txt`. Si `liste.txt` existait déjà, il est **écrasé**.
-
-##### **L'option indispensable : `-a` (append)**
-
-Par défaut, `tee` se comporte comme `>`, il écrase le fichier. Pour qu'il se comporte comme `>>` (ajouter à la fin), on utilise l'option `-a`.
-
-```bash
-echo "Nouvelle entrée de log" | tee -a journal.log
-```
-
-##### **Écrire dans plusieurs fichiers à la fois**
-
-`tee` peut arroser plusieurs cibles simultanément :
-
-```bash
-echo "Alerte Système" | tee log1.txt log2.txt log3.txt
-```
+- **Visibility + Persistence:** You keep an eye on the execution while guaranteeing a written trace.
+- **Pipeline link:** Since `tee` sends what it receives to stdout, it can be inserted **anywhere in the middle** of a pipeline without breaking it.
+- **Privilege elevation:** One of the safest ways to write to a root-protected file while staying inside a user pipeline.
 
 ---
 
-#### **Partie 3 : Le Cas d'Usage "Sudo" (Le plus célèbre)**
+## ⚙️ Part 2: The "How" — Syntax and Basic Usage
 
-C'est l'utilisation la plus astucieuse de `tee`. Imaginez que vous voulez modifier un fichier système protégé :
-
-```bash
-# CELA NE FONCTIONNERA PAS :
-sudo echo "127.0.0.1 monsite.local" >> /etc/hosts
-```
-**Pourquoi ?** Parce que le `sudo` s'applique à `echo`, mais la redirection `>>` est gérée par votre shell actuel, qui n'a pas les droits `root`.
-
-**La solution avec `tee` :**
-```bash
-echo "127.0.0.1 monsite.local" | sudo tee -a /etc/hosts > /dev/null
-```
-Ici, `echo` tourne avec vos droits, mais `tee` tourne avec `sudo`. Il reçoit le texte et a la permission de l'écrire dans `/etc/hosts`. Le `> /dev/null` à la fin sert juste à ne pas afficher la ligne dans le terminal si vous voulez rester discret.
-
----
-
-#### **Partie 4 : Astuces Avancées**
-
-##### **Ignorer les interruptions avec `-i`**
-
-Si vous ne voulez pas que `tee` s'arrête si vous appuyez sur `Ctrl+C` (SIGINT), utilisez l'option `-i` (**ignore interrupts**). C'est utile pour s'assurer que les logs sont bien écrits même si vous interrompez l'affichage.
+General structure:
 
 ```bash
-./longue_tache.sh | tee -i record.log
+command | tee [OPTIONS] [FILE...]
 ```
 
-##### **Utilisation avec les Process Substitutions**
+- `command |` — `tee` almost always reads from a pipe
+- `[OPTIONS]` — modify write behavior (e.g., append instead of overwrite)
+- `[FILE...]` — the file(s) where output should be saved
 
-Vous pouvez utiliser `tee` pour envoyer des données à deux commandes différentes simultanément :
+### The simplest usage
 
 ```bash
-cat données.csv | tee >(process_compta) >(process_marketing) > /dev/null
+ls -l | tee listing.txt
+```
+
+The file list displays in your terminal AND gets saved to `listing.txt`. If `listing.txt` already existed, it gets **overwritten**.
+
+### The essential option: `-a` (append)
+
+By default, `tee` behaves like `>` — it overwrites the file. To behave like `>>` (append to end), use `-a`:
+
+```bash
+echo "New log entry" | tee -a journal.log
+```
+
+### Write to multiple files at once
+
+`tee` can fan out to multiple targets simultaneously:
+
+```bash
+echo "System Alert" | tee log1.txt log2.txt log3.txt
 ```
 
 ---
 
-#### **Partie 5 : Pratique - Exemples concrets**
+## 🔑 Part 3: The Famous sudo Use Case
 
-**Cas 1 : Benchmarker et Logguer**
-Utilisons ton script de benchmark :
+This is the most clever application of `tee`. I wanted to add an entry to a system-protected file:
+
+```bash
+# THIS WILL NOT WORK:
+sudo echo "127.0.0.1 mysite.local" >> /etc/hosts
+```
+
+Why not? Because `sudo` applies to `echo`, but the `>>` redirection is handled by your current shell — which doesn't have root privileges.
+
+```
+What actually happens:
+──────────────────────────────────────────────────────────
+sudo echo "..."   → runs as root ✓
+        │
+        ▼
+     >> /etc/hosts  ← handled by YOUR shell, no root → DENIED ✗
+──────────────────────────────────────────────────────────
+```
+
+**The solution with `tee`:**
+```bash
+echo "127.0.0.1 mysite.local" | sudo tee -a /etc/hosts > /dev/null
+```
+
+```
+How it works:
+──────────────────────────────────────────────────────────
+echo "..."        → runs with your user rights
+        │
+        ▼ pipe
+sudo tee -a /etc/hosts   → tee runs as ROOT ✓ → can write to /etc/hosts
+        │
+        ▼
+  > /dev/null    → suppress terminal output (optional, keeps it clean)
+──────────────────────────────────────────────────────────
+```
+
+`echo` runs with your rights, but `tee` runs under `sudo` and has permission to write to `/etc/hosts`. The `> /dev/null` at the end just suppresses the terminal echo if you want to stay quiet.
+
+---
+
+## 🚀 Part 4: Advanced Tricks
+
+### Ignore interruptions with `-i`
+
+If you don't want `tee` to stop when you press `Ctrl+C` (SIGINT), use `-i` (**ignore interrupts**). Useful to ensure logs are fully written even if you interrupt the display:
+
+```bash
+./long_task.sh | tee -i record.log
+```
+
+### Using with process substitution
+
+You can use `tee` to send data to two different commands simultaneously:
+
+```bash
+cat data.csv | tee >(process_accounting) >(process_marketing) > /dev/null
+```
+
+---
+
+## 🧪 Part 5: Concrete Examples
+
+**Case 1: Benchmark and log simultaneously**
+
 ```bash
 ./benchmark.sh phi3.5 | tee results_phi3.5.log
 ```
-Tu vois les scores en direct et tu gardes le fichier pour tes archives.
 
-**Cas 2 : Déboguer un pipeline complexe**
-Si vous avez un pipeline qui ne donne pas le résultat escompté, insérez `tee` au milieu pour voir l'état des données à cette étape précise :
+You see the scores live and keep the file for your records.
+
+**Case 2: Debug a complex pipeline**
+
+If a pipeline isn't producing the expected result, insert `tee` in the middle to inspect the data state at that exact step:
+
 ```bash
 cat data.txt | grep "error" | tee /tmp/step1.txt | awk '{print $3}' | sort
 ```
-Vous pourrez inspecter `/tmp/step1.txt` pour voir si le `grep` a bien fonctionné avant le `awk`.
 
-**Cas 3 : Sauvegarder l'historique d'une installation**
+You can then inspect `/tmp/step1.txt` to see if `grep` did its job correctly before `awk` processed it.
+
+**Case 3: Save an installation log with date stamp**
+
 ```bash
 sudo apt upgrade -y | tee upgrade_$(date +%F).log
 ```
 
 ---
 
-#### **Conclusion**
+## ✅ Conclusion
 
-`tee` est un outil simple, mais il est le garant de la visibilité dans le monde de l'automatisation. 
+`tee` is a small tool with an outsized impact in the world of automation.
 
-*   Il **double** l'information.
-*   Il **résout** les problèmes de droits avec `sudo`.
-*   Il est le **miroir** de vos pipelines.
+```
+┌─────────────────────────────────────────────────────┐
+│  tee                                                │
+│  → doubles the information stream                   │
+│  → solves privilege escalation with sudo            │
+│  → acts as a mirror inside your pipelines           │
+│  → lets you debug complex pipelines step by step    │
+└─────────────────────────────────────────────────────┘
+```
 
-La prochaine fois que vous lancerez une commande dont vous voulez garder une trace sans sacrifier votre affichage, pensez à `tee`. C'est le petit raccord qui change tout.
+The next time you launch a command where you want to keep a trace without sacrificing live output, think of `tee`. It's the small T-connector that changes everything.
