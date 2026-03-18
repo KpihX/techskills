@@ -186,7 +186,7 @@ uv init --package myproject        # scaffold a new project
 ```
 
 **Templates:**
-- [`pyproject.toml`](templates/pyproject.toml) — KpihX project template: `uv_build` backend, `src/` layout, Typer+Rich, editable install. Copy to project root and fill in the placeholders.
+- [`pyproject.toml`](https://github.com/kpihx/tutos_live/blob/master/templates/pyproject.toml) — KpihX project template: `uv_build` backend, `src/` layout, Typer+Rich, editable install. Copy to project root and fill in the placeholders.
 
 ---
 
@@ -238,8 +238,8 @@ npx docsify-cli serve .
 → **Full guide:** [github-pages.md](github-pages.md) — setup, `.nojekyll` trap, local preview, GitHub Pages activation.
 
 **Templates:**
-- [`github-pages-index.html`](templates/github-pages-index.html) — ready-to-use `index.html`: VS Code dark theme, search, sidebar, inline code color fix. Copy to repo root, rename to `index.html`, replace the 4 `SITE_*` placeholders.
-- [`_sidebar.md`](templates/_sidebar.md) — generic Docsify sidebar with `.nojekyll` reminder. Copy to repo root as `_sidebar.md`.
+- [`github-pages-index.html`](https://github.com/kpihx/tutos_live/blob/master/templates/github-pages-index.html) — ready-to-use `index.html`: VS Code dark theme, search, sidebar, inline code color fix. Copy to repo root, rename to `index.html`, replace the 4 `SITE_*` placeholders.
+- [`_sidebar.md`](https://github.com/kpihx/tutos_live/blob/master/templates/_sidebar.md) — generic Docsify sidebar with `.nojekyll` reminder. Copy to repo root as `_sidebar.md`.
 
 ### grip — GitHub-flavored Markdown preview
 
@@ -332,8 +332,8 @@ sudo dpkg -i waveterm_*.deb
 → **Full guide:** [waveterm.md](waveterm.md) — sidebar widgets, SSH connections, BYOK AI modes (Groq, Mistral), wsh secrets.
 
 **Templates:**
-- [`waveterm-widgets.json`](templates/waveterm-widgets.json) — AI CLI sidebar widgets (claude, codex, gemini, copilot, vibe) + GitHub/GitLab web shortcuts. Copy to `~/.config/waveterm/widgets.json`, fill `BINARY_PATH_*` and `SESSION_ID_*`.
-- [`waveterm-ai-modes.json`](templates/waveterm-ai-modes.json) — BYOK AI Modes (Groq Scout, Groq Maverick, Mistral Large, Codestral, Pixtral). Set secrets via `wsh secret set`, paste into Wave Config → Wave AI Modes.
+- [`waveterm-widgets.json`](https://github.com/kpihx/tutos_live/blob/master/templates/waveterm-widgets.json) — AI CLI sidebar widgets (claude, codex, gemini, copilot, vibe) + GitHub/GitLab web shortcuts. Copy to `~/.config/waveterm/widgets.json`, fill `BINARY_PATH_*` and `SESSION_ID_*`.
+- [`waveterm-ai-modes.json`](https://github.com/kpihx/tutos_live/blob/master/templates/waveterm-ai-modes.json) — BYOK AI Modes (Groq Scout, Groq Maverick, Mistral Large, Codestral, Pixtral). Set secrets via `wsh secret set`, paste into Wave Config → Wave AI Modes.
 
 ### Warp
 

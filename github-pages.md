@@ -58,7 +58,7 @@ and `.nojekyll`. Let me walk through each.
 This is the only non-Markdown file. It loads the Docsify runtime from CDN
 and configures the site — theme, search, sidebar, dark/light toggle.
 
-> **Template available:** [`templates/github-pages-index.html`](templates/github-pages-index.html)
+> **Template available:** [`templates/github-pages-index.html`](https://github.com/kpihx/tutos_live/blob/master/templates/github-pages-index.html)
 > Copy it to your repo root, rename to `index.html`, replace the 4 placeholders
 > (`SITE_TITLE`, `SITE_NAME`, `GITHUB_REPO_URL`, `SEARCH_PLACEHOLDER`).
 > The full annotated version is below for reference.
