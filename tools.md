@@ -130,8 +130,20 @@ Your .npmrc has a prefix setting which is incompatible with nvm.
 Run `nvm use --delete-prefix` to unset it.
 ```
 
-The fix — **never put `prefix` in `.npmrc`**. Use an env var instead, and guard
-nvm loading to prevent double-sourcing:
+**Keep `prefix=` in `~/.npmrc` and ignore the warning.** The warning is cosmetic.
+Removing `prefix=` and using only `NPM_CONFIG_PREFIX` in `~/.kshrc` seems cleaner
+but breaks tool auto-updaters (Codex, Gemini CLI…): they spawn `npm install -g`
+in subprocesses that don't inherit env vars → fall back to system prefix `/usr/local`
+→ EACCES. The `~/.npmrc` file is read by ALL npm invocations unconditionally.
+
+```bash
+# ~/.npmrc — keep this, always:
+# ⚠️ nvm warns about this line — harmless, do NOT remove it.
+prefix=/home/kpihx/.npm-global
+```
+
+Also add `NPM_CONFIG_PREFIX` in `~/.kshrc` as belt-and-suspenders for interactive
+shells, plus the idempotency guard to prevent double-sourcing:
 
 ```bash
 # In ~/.kshrc — BEFORE the interactive guard:
@@ -144,18 +156,10 @@ if [ -z "$NVM_LOADED" ]; then
     export NVM_LOADED=1
 fi
 
-# Env var instead of .npmrc prefix key → nvm never sees it, no conflict
+# Redundant with ~/.npmrc prefix= but reinforces for interactive shells
 export NPM_CONFIG_PREFIX="$HOME/.npm-global"
 export PATH="$HOME/.npm-global/bin:$PATH"
 ```
-
-```bash
-# In ~/.npmrc — remove the prefix line, replace with a comment:
-# npm global prefix managed via NPM_CONFIG_PREFIX in ~/.kshrc
-```
-
-Root cause: nvm reads `~/.npmrc` at startup and complains about `prefix`. It does
-**not** read `NPM_CONFIG_PREFIX`. Same effect, zero conflict.
 
 Also: if `.kshrc` has a `case $- in *i*) ;; *) return ;; esac` guard near the
 top (leftover from `.bashrc` boilerplate), it will silently exit before setting

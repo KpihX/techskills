@@ -316,7 +316,7 @@ npm config get prefix
 
 ---
 
-## ⚠️ Gotcha — the `.npmrc` prefix vs nvm conflict
+## ⚠️ Gotcha — the `.npmrc` prefix vs nvm warning (keep `prefix=`, ignore the warning)
 
 Once you set `prefix=~/.npm-global` in `~/.npmrc`, every shell that sources
 nvm will print a warning on startup:
@@ -328,20 +328,52 @@ Run `nvm use --delete-prefix v22.x.x --silent` to unset it.
 
 **Do not run that command** — it would remove the prefix you just set.
 
-The real fix: **remove `prefix` from `~/.npmrc`** entirely and use an
-environment variable instead. nvm reads `~/.npmrc` at init and complains about
-`prefix`. It does *not* read `NPM_CONFIG_PREFIX`. Same effect, zero conflict.
+**Do not remove `prefix=` from `~/.npmrc` either** — that approach seems
+cleaner (use `NPM_CONFIG_PREFIX` env var instead) but breaks in practice:
+`NPM_CONFIG_PREFIX` is only visible to shells that source `~/.kshrc`. Any
+tool that auto-updates itself by spawning `npm install -g` in a subprocess
+(Codex, Gemini CLI…) won't inherit the env var and will fall back to the
+system prefix `/usr/local` → EACCES.
 
-```bash
-# ~/.npmrc — remove the prefix line:
-# npm global prefix managed via NPM_CONFIG_PREFIX in ~/.kshrc
+```
+Without prefix= in ~/.npmrc:
+
+  Codex auto-updater subprocess
+       │  (no env var inherited)
+       ▼
+  npm → /usr/local/bin/npm
+  npm prefix → /usr/local  (system, requires sudo)
+       │
+  npm install -g @openai/codex
+       │
+       ▼
+  EACCES: permission denied ❌
+
+With prefix= in ~/.npmrc:
+
+  ANY npm invocation (subprocess, MCP, auto-updater, non-interactive shell)
+       │
+       ▼  reads ~/.npmrc unconditionally
+  npm prefix → ~/.npm-global  (user-owned, always writable)
+       │
+  npm install -g @openai/codex
+       │
+       ▼
+  ~/.npm-global/bin/codex  ✅
 ```
 
+The nvm warning is **cosmetic** — it appears on every new interactive terminal
+but has no functional impact. The correct `~/.npmrc`:
+
 ```bash
-# ~/.kshrc — set via env var instead:
-export NPM_CONFIG_PREFIX="$HOME/.npm-global"
-export PATH="$HOME/.npm-global/bin:$PATH"
+# ~/.npmrc
+# Read by ALL npm invocations regardless of shell/nvm state.
+# ⚠️ nvm warns about this — that warning is harmless. Do NOT remove this line.
+prefix=/home/kpihx/.npm-global
 ```
+
+Also keep `NPM_CONFIG_PREFIX` in `~/.kshrc` as a belt-and-suspenders redundancy
+for interactive shells — it reinforces the same value at the env level:
 
 ---
 
