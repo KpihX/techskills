@@ -314,6 +314,81 @@ npm config get prefix
 
 ---
 
+---
+
+## ⚠️ Gotcha — the `.npmrc` prefix vs nvm conflict
+
+Once you set `prefix=~/.npm-global` in `~/.npmrc`, every shell that sources
+nvm will print a warning on startup:
+
+```
+Your user's .npmrc file has a prefix setting which is incompatible with nvm.
+Run `nvm use --delete-prefix v22.x.x --silent` to unset it.
+```
+
+**Do not run that command** — it would remove the prefix you just set.
+
+The real fix: **remove `prefix` from `~/.npmrc`** entirely and use an
+environment variable instead. nvm reads `~/.npmrc` at init and complains about
+`prefix`. It does *not* read `NPM_CONFIG_PREFIX`. Same effect, zero conflict.
+
+```bash
+# ~/.npmrc — remove the prefix line:
+# npm global prefix managed via NPM_CONFIG_PREFIX in ~/.kshrc
+```
+
+```bash
+# ~/.kshrc — set via env var instead:
+export NPM_CONFIG_PREFIX="$HOME/.npm-global"
+export PATH="$HOME/.npm-global/bin:$PATH"
+```
+
+---
+
+## ⚠️ Gotcha — the interactive guard that silently breaks everything
+
+If your universal shell hub (`~/.kshrc`) was bootstrapped from a `.bashrc`
+template, it likely contains this near the top:
+
+```bash
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+```
+
+This causes `.kshrc` to **exit immediately** for any non-interactive shell
+(`zsh -l -c`, scripts, MCP server launchers). Everything below — PATH, nvm,
+`NPM_CONFIG_PREFIX`, `SSH_AUTH_SOCK` — is silently skipped.
+
+The fix: move that guard to **after** all `export` statements. Only aliases,
+history settings, and color support need to be interactive-only.
+
+```bash
+# ── Universal exports — always run, all shell types ─────────────────────────
+
+if [ -z "$NVM_LOADED" ]; then           # idempotency guard (prevents double-
+    export NVM_DIR="$HOME/.nvm"         # sourcing when zshrc + zprofile both
+    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # source kshrc)
+    nvm use default --silent 2>/dev/null
+    export NVM_LOADED=1
+fi
+export NPM_CONFIG_PREFIX="$HOME/.npm-global"
+export PATH="$HOME/.npm-global/bin:$PATH"
+export SSH_AUTH_SOCK=~/.bitwarden-ssh-agent.sock
+# ... all other exports ...
+
+# ── Interactive-only — skip for scripts, MCPs, zsh -l -c ────────────────────
+case $- in *i*) ;; *) return ;; esac
+
+HISTCONTROL=ignoreboth
+alias rm='trash-put'
+# ... aliases, colors ...
+```
+
+---
+
 ## 📚 References
 
 - [nvm repository](https://github.com/nvm-sh/nvm)
