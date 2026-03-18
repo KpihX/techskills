@@ -64,6 +64,26 @@ AI models (Ollama, HuggingFace), and `~/Work/` project artifacts.
 
 ---
 
+## 🖼️ Media & Images
+
+### ImageMagick (`magick`)
+
+Swiss-army knife for image manipulation from the CLI. Crop, resize, convert
+format, annotate, compose — without opening a GUI. The go-to tool for preparing
+screenshots and assets for tutorials.
+
+```bash
+sudo apt install imagemagick
+
+magick input.png -crop WxH+X+Y output.png   # crop to region
+magick input.png -resize 1280x output.png   # resize (keep ratio)
+magick input.png -resize 50% output.png     # scale by percent
+magick *.png output.pdf                     # merge images to PDF
+magick convert input.png output.jpg         # format conversion
+```
+
+---
+
 ## 🌐 Network & Connectivity
 
 ### Tailscale
