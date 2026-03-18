@@ -190,6 +190,43 @@ uv init --package myproject        # scaffold a new project
 
 ---
 
+### pyenv — Python Version Manager
+
+The Python equivalent of nvm. Manages multiple Python versions on the same
+machine, completely isolated from the system Python. Each version lives in
+`~/.pyenv/versions/<version>/` — no sudo, no apt, no system pollution.
+
+```bash
+curl https://pyenv.run | bash
+```
+
+Add to `~/.kshrc` (universal hub — before the interactive guard):
+
+```bash
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - zsh)"
+```
+
+Common use:
+
+```bash
+pyenv install 3.14          # install a specific version
+pyenv install --list        # list all available versions
+pyenv global 3.14           # set default for all shells
+pyenv local 3.12            # pin a project (writes .python-version)
+pyenv versions              # list installed versions
+pyenv version               # show current active version
+```
+
+The `.python-version` file at the project root is the pyenv equivalent of
+nvm's `.nvmrc` — pyenv switches automatically when you `cd` into the directory.
+
+Works seamlessly with `uv`: `uv` respects the active pyenv Python when you
+run `uv venv` or `uv run` inside a project that has `.python-version`.
+
+---
+
 ## 🐙 Git & Forges
 
 ### gh — GitHub CLI

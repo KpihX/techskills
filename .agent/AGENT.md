@@ -153,11 +153,12 @@ Every agent adding or editing a `.md` tutorial MUST follow:
 2. Under the relevant tool in `tools.md`, add a `**Templates:**` line with a link:
    ```markdown
    **Templates:**
-   - [`filename.ext`](templates/filename.ext) — one-line description. Copy to X, rename to Y, fill Z.
+   - [`filename.ext`](https://github.com/kpihx/tutos_live/blob/master/templates/filename.ext) — one-line description. Copy to X, rename to Y, fill Z.
    ```
+   ⚠️ **Always use absolute GitHub blob URLs** — relative paths like `(templates/filename.ext)` cause 404 on the Docsify site because Docsify intercepts relative links and tries to load them as Markdown routes. [CLAUDE]
 3. In the relevant tutorial `.md`, add a callout at the start of the section where the file is introduced:
    ```markdown
-   > **Template available:** [`templates/filename.ext`](templates/filename.ext) — copy, rename, fill placeholders.
+   > **Template available:** [`templates/filename.ext`](https://github.com/kpihx/tutos_live/blob/master/templates/filename.ext) — copy, rename, fill placeholders.
    ```
 4. `git add templates/ tools.md <tutorial>.md && git commit -m "docs(templates): add <name> template"`
 5. Push both remotes.
