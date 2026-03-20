@@ -4,6 +4,13 @@
 // Replace SESSION_ID_CODEX with your Codex session ID (find it in ~/.codex/)
 // Colors: any hex code. Icons: see Wave icon picker (gear → Sidebar Widgets)
 // Reference: https://docs.waveterm.dev/reference/widgets
+//
+// IMPORTANT — zsh -l -c wrapper (mandatory for secret-aware CLIs):
+// WaveTerm is launched as a GUI app (no login shell) → cmd widgets run as direct exec
+// → env vars from ~/.kshrc (API keys, bw-env secrets) are NOT available.
+// Fix: wrap every cmd with "zsh -l -c '...'" so the login shell sources ~/.zprofile
+// → ~/.kshrc → bw-env/shell.sh → secrets injected before the binary runs.
+// See: zsh_env.md for the full explanation.
 {
   "claude": {
     "icon": "sparkles",
@@ -13,7 +20,7 @@
       "meta": {
         "view": "term",
         "controller": "cmd",
-        "cmd": "BINARY_PATH_CLAUDE --continue",
+        "cmd": "zsh -l -c 'BINARY_PATH_CLAUDE --continue'",
         "cwd": "~"
       }
     }
@@ -26,7 +33,7 @@
       "meta": {
         "view": "term",
         "controller": "cmd",
-        "cmd": "BINARY_PATH_CODEX resume SESSION_ID_CODEX",
+        "cmd": "zsh -l -c 'BINARY_PATH_CODEX resume SESSION_ID_CODEX'",
         "cwd": "~"
       }
     }
@@ -39,7 +46,7 @@
       "meta": {
         "view": "term",
         "controller": "cmd",
-        "cmd": "BINARY_PATH_GEMINI --resume 1",
+        "cmd": "zsh -l -c 'BINARY_PATH_GEMINI --resume 1'",
         "cwd": "~"
       }
     }
@@ -52,7 +59,7 @@
       "meta": {
         "view": "term",
         "controller": "cmd",
-        "cmd": "BINARY_PATH_COPILOT --resume 1",
+        "cmd": "zsh -l -c 'BINARY_PATH_COPILOT --resume 1'",
         "cwd": "~"
       }
     }
@@ -65,7 +72,7 @@
       "meta": {
         "view": "term",
         "controller": "cmd",
-        "cmd": "BINARY_PATH_VIBE --resume 1",
+        "cmd": "zsh -l -c 'BINARY_PATH_VIBE --resume 1'",
         "cwd": "~"
       }
     }

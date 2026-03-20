@@ -130,6 +130,69 @@ auto-resume sessions, pass the right flag:
 
 ---
 
+## 🔐 Secrets & Environment — the `zsh -l -c` pattern
+
+There's a subtle problem with `cmd` widgets that took a while to surface.
+
+WaveTerm is a GUI app — it's launched by the desktop session manager, not
+by a terminal. That means it starts with a **minimal environment**: just the
+few variables the display server injects. None of the things that live in
+`~/.kshrc` (secrets, API keys, PATH additions) are present.
+
+When a widget fires its `cmd`, it's an **exec** — not a shell invocation.
+The binary runs directly, inheriting WaveTerm's minimal env. Result: any
+AI CLI that reads an API key from `$SOME_API_KEY` finds nothing and fails.
+
+```
+GUI desktop session
+     │
+     ▼
+WaveTerm process (minimal env — no bw-env secrets)
+     │
+     ├── web block  ✅  (no env needed)
+     ├── term block ✅  (launches a shell → sources .zshrc → gets secrets)
+     └── cmd block  ⚠️  direct exec of binary → inherits Wave's minimal env
+                        → API keys missing → CLI auth fails
+```
+
+The fix is to wrap every `cmd` with a **login shell invocation**:
+
+```json
+"cmd": "zsh -l -c '/home/kpihx/.local/bin/claude --continue'"
+```
+
+What `zsh -l` does:
+1. Sources `~/.zprofile` (login shell file)
+2. `~/.zprofile` sources `~/.kshrc`
+3. `~/.kshrc` sources `bw-env/shell.sh` → injects secrets from RAM
+4. Then executes the quoted command with that fully populated env
+
+```
+zsh -l -c 'binary'
+     │
+     ├── sources ~/.zprofile
+     │        └── sources ~/.kshrc
+     │                 └── sources bw-env/shell.sh
+     │                          └── injects secrets from /dev/shm
+     │
+     └── exec binary   ← now has full env with API keys ✅
+```
+
+**Why not `zsh -l -i`?** The `-i` flag makes the shell interactive, which
+triggers oh-my-zsh, all plugins, and completions — adds 2–3 seconds of
+startup overhead per widget. The `-l` flag alone sources login files only
+(~100ms) and is sufficient for secret injection.
+
+**Why not `zsh -i` alone?** Interactive-only shells source `~/.zshrc` but
+not `~/.zprofile`. Since `~/.kshrc` is sourced by both `~/.zprofile` and
+`~/.zshrc`, either path works — but `-l` is faster (no oh-my-zsh).
+
+> **Full tutorial:** [zsh_env.md](zsh_env.md) — the complete `.zshenv` /
+> `.zprofile` / `.zshrc` triptych, when each file is sourced, and how
+> this fits into the broader secret injection architecture.
+
+---
+
 ## 🔌 SSH Connections
 
 WaveTerm natively manages SSH connections — they appear as connection options

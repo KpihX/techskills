@@ -1,0 +1,15 @@
+# config.yaml.example — Non-sensitive project settings
+# Copy to: src/<your_package>/config.yaml
+# Do NOT put secrets here — secrets go in .env (resolved at runtime via bw-env)
+
+server:
+  host: localhost
+  port: 8080
+
+log:
+  level: INFO   # DEBUG | INFO | WARNING | ERROR
+
+# Add your project-specific non-sensitive settings below:
+# feature:
+#   max_retries: 3
+#   timeout_seconds: 30

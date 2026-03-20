@@ -437,7 +437,7 @@ sudo dpkg -i warp-terminal_*.deb
 
 `zsh` is the interactive shell. `oh-my-zsh` adds plugins, themes, and sane
 defaults. `~/.kshrc` is the universal hub for secrets and aliases, sourced
-by both Zsh and Bash via `~/.zshenv` and `~/.bashrc`.
+by both `.zprofile` (login shells) and `.zshrc` (interactive shells).
 
 ```bash
 sudo apt install zsh
@@ -446,6 +446,8 @@ chsh -s $(which zsh)
 # Oh My Zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
+
+→ **Full guide:** [zsh_env.md](zsh_env.md) — `.zshenv` / `.zprofile` / `.zshrc` triptych, when each file is sourced, the `zsh -l -c` secret injection pattern, and the GUI app gap (WaveTerm, VS Code).
 
 ---
 
