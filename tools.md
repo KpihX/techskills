@@ -103,7 +103,7 @@ Bitwarden SSH agent, FQDN hardening.
 
 ---
 
-## 📦 Node.js
+## 📦 JS/TS Runtimes
 
 ### nvm — Node Version Manager
 
@@ -185,31 +185,21 @@ Node. Bun and Node coexist without conflict.
 
 → **Full guide:** [bun.md](bun.md) — project scaffold, TypeScript strict mode, Biome linter, `bun test`, Docker base image, coexistence with nvm.
 
+### qmd — Quick Markdown Search
+
+A local, AI-powered semantic search engine for your Markdown notes and code.
+Indexes your entire knowledge base and allows natural language queries,
+vector search, and hybrid search. Integrates with Git for auto-updates.
+
+```bash
+bun install -g @tobilu/qmd
+```
+
+→ **Full guide:** [qmd.md](qmd.md) — installation, configuration, search modes, Git hooks automation.
+
 ---
 
 ## 🐍 Python
-
-### uv
-
-Ultra-fast Python package manager and project tool. Single binary, replaces
-`pip`, `pipx`, `virtualenv`, `poetry` — with a consistent opinionated
-workflow for scripts, tools, and full projects.
-
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-Common use:
-
-```bash
-uv tool install <package>          # install CLI tool globally (~/.local/bin)
-uv tool install --editable .       # editable install for own packages
-uv run --with <lib> script.py      # run script with ad-hoc dependency
-uv init --package myproject        # scaffold a new project
-```
-
-**Templates:**
-- [`pyproject.toml`](https://github.com/kpihx/tutos_live/blob/master/templates/pyproject.toml) — KpihX project template: `uv_build` backend, `src/` layout, Typer+Rich, editable install. Copy to project root and fill in the placeholders.
 
 ---
 
