@@ -383,8 +383,8 @@ bw-env status    # check lock state and visible secrets
 bw-env lock      # purge secrets from RAM
 ```
 
-→ **Full guide:** [bw-env.md](bw-env.md) — architecture, commands, auto-lock on sleep.
-**Repos:** [GitHub](https://github.com/KpihX/bw-env) · [GitLab](https://gitlab.com/kpihx/bw-env)
+**Full documentation (architecture, install, commands, recovery runbook):**
+→ [github.com/KpihX/bw-env](https://github.com/KpihX/bw-env) · [gitlab.com/kpihx/bw-env](https://gitlab.com/kpihx/bw-env)
 
 ### Bitwarden CLI (`bw`)
 
