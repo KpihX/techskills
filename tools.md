@@ -469,13 +469,13 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 Like `gh` for GitHub but for Telegram. Manages bots (Bot API, auto-discovers tokens from `TELEGRAM_*_TOKEN`) and personal conversations (Telethon MTProto, one-time OTP setup). Two independent layers, zero magic.
 
 ```bash
-git clone git@github.com:KpihX/tg.git ~/Work/tools/tg
-cd ~/Work/tools/tg
+git clone git@github.com:KpihX/tg.git ~/Work/Tools/tg
+cd ~/Work/Tools/tg
 uv tool install --editable .
 ```
 
-→ **Full guide:** [tg.md](tg.md) — Bot API, Telethon user API, config, security.
-**Repos:** [GitHub](https://github.com/KpihX/tg) · [GitLab](https://gitlab.com/kpihx/tg)
+**Full documentation (architecture, Bot API, Telethon user API, config, security):**
+→ [github.com/KpihX/tg](https://github.com/KpihX/tg) · [gitlab.com/kpihx/tg](https://gitlab.com/kpihx/tg)
 
 ---
 

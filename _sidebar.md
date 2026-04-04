@@ -17,7 +17,6 @@
   - [🌊 WaveTerm](waveterm.md)
   - [🐚 Zsh + env](zsh_env.md)
   - [🧹 Cleanup Suite](clean.md)
-  - [🤖 tg — Telegram CLI](tg.md)
   - [📧 m365 CLI — Microsoft 365](m365-cli.md)
   - [☁️ Cloudflare CLI (flarectl)](cloudflare.md)
 
