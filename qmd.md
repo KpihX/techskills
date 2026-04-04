@@ -14,7 +14,18 @@ Installation is done via `bun` (my JS/TS package manager of choice).
 bun install -g @tobilu/qmd
 ```
 
-Once installed, the first step is to tell it which folders to index. I have two primary knowledge sources:
+Once installed, the first step is to tell it which folders to index. Today the canonical source of truth is:
+
+- `$HOME/.config/qmd/index.yml`
+
+The live state can then be checked with:
+
+```bash
+qmd status
+qmd collection list
+```
+
+Historically, I started from two primary knowledge sources:
 
 1.  `$HOME/Work/tutos_live`
 2.  `$HOME/Work/Homelab/presentation`
@@ -22,19 +33,31 @@ Once installed, the first step is to tell it which folders to index. I have two 
 So I created two `qmd` "collections":
 
 ```bash
-# Create the "tutos_live" collection and specify files to include
-qmd collection add $HOME/Work/tutos_live/ -n tutos_live --mask "**/*.{md,yml,yaml,json,py,toml,sh}"
-
-# Create the "presentation" collection for Homelab docs
-qmd collection add $HOME/Work/Homelab/presentation/ -n presentation --mask "**/*.{md,yml,yaml,json,py,toml,sh}"
+# Historical bootstrap
+qmd collection add $HOME/Work/tutos_live/ -n tutos_live --mask "**/*.{md,yml,yaml,toml}"
+qmd collection add $HOME/Work/Homelab/presentation/ -n presentation --mask "**/*.{md,yml,yaml,toml}"
 ```
-The `--mask` flag is crucial to tell `qmd` to index not only `.md` files, but also configuration files and scripts.
+
+The important point today is different: keep the index **hot-only**.
+
+- prefer `md`, `yml`, `yaml`, `toml`
+- avoid raw chat histories, large `json/jsonl` dumps, and volatile scripts by default
+- inspect runtime histories directly from disk instead of forcing them into QMD
 
 Finally, you need to initiate the semantic indexing. This command will download AI models (if it's the first time) and transform your documents into vectors.
 ```bash
 qmd embed
 ```
 Your knowledge base is now ready to be queried.
+
+If embeddings seem CPU-bound, check the local Vulkan toolchain first:
+
+```bash
+which glslc
+qmd status
+```
+
+On this machine, missing `glslc` was the blocker that prevented the local Vulkan backend from building correctly for `node-llama-cpp`.
 
 ## Usage: From Simple to Structured Search
 
@@ -60,20 +83,34 @@ qmd query $'hyde: A tutorial that explains how to create a systemd service file 
 
 ## Automation with Git Hooks
 
-To ensure the `qmd` index stays fresh without blocking commits, I use a `post-commit` Git hook in each repository. The hook runs `qmd update <collection>` synchronously, then starts `qmd embed <collection>` in the background only if no embed for that collection is already running.
+To ensure the `qmd` index stays fresh without blocking commits, I use a shared `post-commit` Git hook template. The current source of truth is:
 
-**File:** `.git/hooks/post-commit` (in each repository)
+- `$HOME/.agents/skills/k-qmd/references/post-commit-hook.sh`
+
+Repositories that match an active QMD collection can symlink `.git/hooks/post-commit` directly to that file.
+
+The current behavior is intentionally conservative:
+
+- derive the collection from the repo root name unless overridden
+- run `qmd update <collection>` synchronously
+- default to `update-only`
+- optional debounced background `qmd embed <collection>`
+- skip cleanly if the repo has no active QMD collection
+
+**File:** `.git/hooks/post-commit` (symlink or copy from the shared template)
 ```bash
 #!/bin/sh
-COLLECTION="tutos_live"
-PATTERN="\\.(md|yml|yaml|json|py|toml|sh)$"
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+REPO_NAME="$(basename "$REPO_ROOT")"
+COLLECTION="${COLLECTION:-$REPO_NAME}"
+PATTERN="${PATTERN:-\\.(md|yml|yaml|toml)$}"
 QMD="${QMD:-$HOME/.npm-global/bin/qmd}"
-EMBED_LOG="${TMPDIR:-/tmp}/qmd-embed-${COLLECTION}.log"
+EMBED_MODE="${EMBED_MODE:-update-only}"
 
 echo "--- [QMD Hook] Running post-commit checks ---"
 
 if ! command -v "$QMD" > /dev/null 2>&1 && ! command -v qmd > /dev/null 2>&1; then
-    echo "--- [QMD Hook] Error: 'qmd' command not found. Skipping update."
+    echo "--- [QMD Hook] 'qmd' not found. Skipping update."
     exit 0
 fi
 
@@ -82,14 +119,16 @@ if ! command -v "$QMD_BIN" > /dev/null 2>&1; then
     QMD_BIN="qmd"
 fi
 
+if ! "$QMD_BIN" collection show "$COLLECTION" > /dev/null 2>&1; then
+    echo "--- [QMD Hook] Collection '$COLLECTION' not found. Skipping."
+    exit 0
+fi
+
 if git diff --name-only HEAD~1 HEAD 2>/dev/null | grep -qE "$PATTERN"; then
-    echo "--- [QMD Hook] Relevant files were modified. Updating QMD index..."
+    echo "--- [QMD Hook] Relevant files modified. Updating QMD index..."
     if "$QMD_BIN" update "$COLLECTION"; then
-        if pgrep -af "qmd(.js)? embed ${COLLECTION}" > /dev/null 2>&1; then
-            echo "--- [QMD Hook] Embed already running. Skipping duplicate background embed."
-        else
-            nohup "$QMD_BIN" embed "$COLLECTION" > "$EMBED_LOG" 2>&1 &
-            echo "--- [QMD Hook] Background embed started. Log: $EMBED_LOG"
+        if [ "$EMBED_MODE" = "update-only" ]; then
+            echo "--- [QMD Hook] Update-only mode. Skipping embed."
         fi
         echo "--- [QMD Hook] QMD index update complete."
     fi
@@ -100,5 +139,7 @@ fi
 exit 0
 ```
 Remember to make it executable: `chmod +x .git/hooks/post-commit`.
+
+One practical nuance: during the first local Vulkan rebuild, `qmd embed` can still print a temporary `no GPU acceleration` warning while `node-llama-cpp` rebuilds its native backend. The steady-state truth is `qmd status`, not that transient warning.
 
 With this configuration, `qmd` has become a powerful search tool perfectly integrated into my workflow, allowing me to access my own knowledge base intelligently and instantly.
