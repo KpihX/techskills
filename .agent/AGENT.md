@@ -350,7 +350,7 @@ For every new project, you MUST:
         4. Load local `.env` (if present) to **override** values for local development.
 6.  **Local Rules Injection:** You MUST surgically update the `## RULES` section of the newly created local `.agent/AGENT.md` to include the following project-specific mandates:
     - **Proactive Documentation:** Propose updates to all `.md` files (README, TODO, CHANGELOG, AGENT) after every key milestone.
-    - **Proactive Git Lifecycle:** Propose `git add .`, `git commit`, and `git push all remotes` (GitHub/GitLab) as soon as a stable state is reached.
+    - **Proactive Git Lifecycle:** Propose `git add .`, `git commit`, and `make push` (instead of direct `git push`) as soon as a stable state is reached.
     - **Proactive Repository Management:** `gh` (GitHub) and `glab` (GitLab) are ALREADY INSTALLED. Default to **public** visibility. You MUST challenge this default and suggest private visibility if a project contains sensitive logic, proprietary data, or is in an early, unstable state. Use them for initializing remotes, creating repositories, and performing all management tasks when requested.
     - **Proactive Python Lifecycle:** For Python projects, propose `uv build` and `uv publish` when a release-ready state is achieved.
     - **Proactive Memory Promotion:** Propose moving local facts from the project's `## MEMORY` to the global `~/.agent/AGENT.md` if they have general architectural relevance.
