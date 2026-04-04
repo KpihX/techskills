@@ -97,6 +97,21 @@ The current behavior is intentionally conservative:
 - optional debounced background `qmd embed <collection>`
 - skip cleanly if the repo has no active QMD collection
 
+For important searches, I now prefer:
+
+```bash
+qmdr query "intel arc vulkan" -c tutos_live
+```
+
+`qmdr` is an explicit wrapper that:
+
+1. runs `qmd status`
+2. checks whether `Pending > 0`
+3. runs `qmd embed` first if needed
+4. only then executes `qmd query`, `qmd search`, or `qmd vsearch`
+
+This preserves the lean post-commit hook model while still giving me a deterministic "fresh before search" entrypoint.
+
 **File:** `.git/hooks/post-commit` (symlink or copy from the shared template)
 ```bash
 #!/bin/sh
