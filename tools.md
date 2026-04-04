@@ -203,20 +203,6 @@ bun install -g @tobilu/qmd
 
 ---
 
-### qmd — Quick Markdown Search
-
-A local, AI-powered semantic search engine for your Markdown notes and code.
-Indexes your entire knowledge base and allows natural language queries,
-vector search, and hybrid search. Integrates with Git for auto-updates.
-
-```bash
-bun install -g @tobilu/qmd
-```
-
-→ **Full guide:** [qmd.md](qmd.md) — installation, configuration, search modes, Git hooks automation.
-
----
-
 ### pyenv — Python Version Manager
 
 The Python equivalent of nvm. Manages multiple Python versions on the same
