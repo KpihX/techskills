@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1] — 2026-04-07
+
+### Added
+- [x] `automount_drive.md` — Universal Auto-Mount for External Disks tutorial: UUID, fstab, x-systemd.automount, manual mount-point creation
+
+---
+
 ## [0.9.0] — 2026-03-22
 
 ### Added

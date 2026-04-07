@@ -13,6 +13,7 @@
   - [📦 Node.js & npm prefix](npm-prefix.md)
   - [🥟 Bun — JS/TS Runtime](bun.md)
   - [🧠 qmd — Local Semantic Search](qmd.md)
+  - [💾 Automount External Disk](automount_drive.md)
   - [🔑 bw-env — Secret Injection](bw-env.md)
   - [🌊 WaveTerm](waveterm.md)
   - [🐚 Zsh + env](zsh_env.md)

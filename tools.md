@@ -103,6 +103,24 @@ Bitwarden SSH agent, FQDN hardening.
 
 ---
 
+## 🖥️ Remote Desktop & Projection
+
+### RustDesk
+
+Open-source remote desktop software. Allows screen projection and remote control
+between PC and phone. Replaces proprietary solutions like TeamViewer or AnyDesk.
+The background service is disabled by default to save resources.
+
+```bash
+# Start manually when needed:
+sudo systemctl start rustdesk.service
+
+# Stop manually:
+sudo systemctl stop rustdesk.service
+```
+
+---
+
 ## 📦 JS/TS Runtimes
 
 ### nvm — Node Version Manager

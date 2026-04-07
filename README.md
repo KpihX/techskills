@@ -26,6 +26,7 @@ No theory, no made-up examples. Everything here was lived on my machine and docu
 | [🐚 Zsh + env](zsh_env.md) | `.zshenv`/`.zprofile`/`.zshrc` triptych, GUI app secret gap, `zsh -l -c` injection pattern |
 | [🔑 bw-env — Secret Injection](bw-env.md) | Bitwarden-backed secrets in RAM: unlock, inject, auto-lock on sleep |
 | [🌊 WaveTerm](waveterm.md) | Block-based terminal — sidebar widgets, SSH, BYOK AI modes (Groq, Mistral), wsh secrets |
+| [💾 Automount External Disk](automount_drive.md) | Universal "lazy" mount via fstab + x-systemd.automount — mount it when you touch it |
 | [🧹 Cleanup Suite](clean.md) | Modular disk cleanup — Snap, cache, Docker, AI models, Work artifacts — 4 risk levels |
 | [🤖 tg — Telegram CLI](tg.md) | Bot API + Telethon user API — send, read, manage bots and personal chats from the terminal |
 | [📧 m365 CLI — Microsoft 365](m365-cli.md) | Mail, calendar, OneDrive via Graph API — device code auth, personal accounts |

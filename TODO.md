@@ -10,6 +10,7 @@
 - [ ] `bw-env.md` — Bitwarden-backed env manager: secrets injected to RAM via `/dev/shm`
 
 ## Done
+- [x] `automount_drive.md` — Universal Auto-Mount for External Disks tutorial
 - [x] `qmd.md` — QMD: Local AI-powered semantic search engine tutorial
 - [x] Project init: `git init`, Docsify setup, agent symlinks (`CLAUDE.md`, `GEMINI.md`, `AGENTS.md`)
 - [x] `tailscale.md` — MagicDNS permanent DNS fix, SSH config with Bitwarden SSH agent

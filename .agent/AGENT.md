@@ -267,7 +267,7 @@ tutos_live/
 - `~/Work/AI/boost/`: **Fractal Agent OS** (R&D) — Vision: become the local, flexible agent-CLI platform allowing connection to any LLM with total control. Stack: Python 3.12+, AsyncIO, LiteLLM, Textual. Currently in active development.
 - `~/Work/viperx/`: Python project scaffolding tool (`uv_build`, opinionated KpihX conventions).
 - `~/Work/tools/k-vpn/`: VPN Gate CLI (OpenVPN, `--insecure` flag for eduroam/l'X).
-- `~/Work/sh/`: Personal scripts & system tools (Backup, DotGuard, Tutorials).
+- `~/Work/sh/`: Personal scripts & system tools (Backup, Tutorials).
 - `~/Work/sh/bw-env/`: Bitwarden-backed env var manager — secrets injected into RAM via `/dev/shm`.
 - `~/Work/sh/clean/`: **Unified Cleanup Suite** - A modular, proactive cleaning system for KpihX-Ubuntu.
     - Orchestrated by `clean_all.sh`.
