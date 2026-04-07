@@ -1,4 +1,4 @@
-# 🐧 KpihX Ubuntu — Live Tutorials
+# TechSkills
 
 > **Ubuntu-focused knowledge base.** Real problems, real fixes, documented as they happen on KpihX-Ubuntu (Ubuntu 25.10).
 
