@@ -4,6 +4,10 @@
 
 No theory, no made-up examples. Everything here was lived on my machine and documented after the fact.
 
+## 🌐 Live Site
+
+- **GitHub Pages:** [https://kpihx.github.io/techskills/](https://kpihx.github.io/techskills/)
+
 ---
 
 ## 🧰 Reference
