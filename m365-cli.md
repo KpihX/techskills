@@ -2,7 +2,7 @@
 
 > Access Outlook mail, calendar, and OneDrive from the terminal via the Microsoft Graph API.
 
-I wanted to read and manage my Outlook (`ivann.kamdem@hotmail.com`) and Polytechnique mail from the terminal — without a browser. Microsoft has an official CLI for this: `@pnp/cli-microsoft365`. It uses device-code OAuth, which means it prints a URL and a code, you paste the code in a browser once, and after that the CLI handles the rest via stored tokens.
+I wanted to read and manage my Outlook (`ivann.kamdem@hotmail.com`) and Polytechnique mail from the terminal — without a browser-first workflow. Microsoft has an official CLI for this: `@pnp/cli-microsoft365`. It uses device-code OAuth, which means it prints a URL and a code, you paste the code in a browser once, and after that the CLI handles the rest via stored tokens.
 
 ---
 
@@ -42,13 +42,13 @@ Uses the npm global prefix (`~/.npm-global`). Installed once, auto-updates via `
 
 ## 🔑 Azure App Registration
 
-This is the one-time setup that links the CLI to your Microsoft account. You need an **Azure App Registration** configured for personal accounts.
+This is the one-time setup that links the CLI to your Microsoft account.
 
 ### Step-by-step (do this once)
 
 1. Go to `https://portal.azure.com` → **Azure Active Directory** → **App registrations** → **New registration**
 2. Name: `m365-cli`
-3. **Supported account types:** "Personal Microsoft accounts only"
+3. **Supported account types:** keep your existing working app registration (do not rotate IDs unless required)
 4. **Redirect URI:** leave empty (device code flow doesn't need it)
 5. Click **Register**
 6. Note the **Application (client) ID** and **Directory (tenant) ID** — store them in Bitwarden `GLOBAL_ENV_VARS`
@@ -58,7 +58,7 @@ This is the one-time setup that links the CLI to your Microsoft account. You nee
 Azure Portal setup:
   New App Registration
        ↓
-  "Personal Microsoft accounts only"   ← critical — "My org only" blocks personal accounts
+  Existing m365 app registration (appId + tenant routing)
        ↓
   Authentication → Allow public client flows   ← required for device code flow
        ↓
@@ -80,7 +80,12 @@ After adding, re-inject: `bw-env unlock`.
 ## 🔐 Authentication
 
 ```bash
-m365 login --authType deviceCode
+# Stability toggles (prevents browser/clipboard callback issues in some Linux sessions)
+m365 cli config set --key autoOpenLinksInBrowser --value false
+m365 cli config set --key copyDeviceCodeToClipboard --value false
+
+# Known-working pattern in this environment
+m365 login --authType deviceCode --appId <your-app-id> --tenant consumers
 ```
 
 Output:
@@ -92,12 +97,14 @@ and enter the code XXXXXXXX to authenticate.
 Open the URL in a browser, paste the code, sign in with your Microsoft account. Done — tokens are cached locally and refreshed automatically.
 
 ```bash
-# Verify who you're logged in as:
-m365 status
+# Verify connection metadata
+m365 status --output json
 
-# Logout:
-m365 logout
+# Deep diagnostics when login fails
+m365 login --authType deviceCode --appId <your-app-id> --tenant consumers --debug
 ```
+
+Note: in this environment, `m365 status` may show `"connectedAs": ""` even when reads work. Always validate with a real mailbox read.
 
 ---
 
@@ -106,27 +113,24 @@ m365 logout
 ### List messages
 
 ```bash
-# Latest 10 messages (default)
-m365 outlook mail list --query '$top=10&$select=subject,from,receivedDateTime,isRead'
+# Latest messages from Inbox
+m365 outlook message list --folderName Inbox --output json
 
-# Unread only
-m365 outlook mail list --query '$filter=isRead eq false&$top=20'
-
-# From a specific folder
-m365 outlook mail list --mailFolder Inbox --query '$top=5'
+# Latest 10 only (JMESPath slicing on command output)
+m365 outlook message list --folderName Inbox --output json --query "[0:10].{subject:subject,from:from.emailAddress.address,receivedDateTime:receivedDateTime,isRead:isRead}"
 ```
 
 ### Read a message
 
 ```bash
 # Get message ID first, then read body
-m365 outlook mail list --query '$top=5&$select=id,subject' --output json | python3 -c "
+m365 outlook message list --folderName Inbox --output json --query "[0:5].{id:id,subject:subject}" | python3 -c "
 import json,sys
 msgs = json.load(sys.stdin)
 for m in msgs: print(m['id'][:20], '...', m['subject'])
 "
 
-m365 outlook mail get --id <message-id>
+m365 outlook message get --id <message-id>
 ```
 
 ### Send a message

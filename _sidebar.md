@@ -20,6 +20,7 @@
   - [🧹 Cleanup Suite](clean.md)
   - [📧 m365 CLI — Microsoft 365](m365-cli.md)
   - [☁️ Cloudflare CLI (flarectl)](cloudflare.md)
+  - [💿 Windows 11 USB Install](win11_usb_install.md)
 
 - **🔌 MCPs**
   - [🔐 bw-mcp — Bitwarden Proxy](mcps/bw-mcp.md)

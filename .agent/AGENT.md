@@ -441,7 +441,7 @@ This directory is the "Black Box" and single source of truth for the Homelab. It
     - **2026-03** — Shell Architecture: Fixed universal secret injection via `.zshenv` -> `.kshrc` (Reverted to `.zshrc` for security, but architecture documented).
     - **2026-03** — Shell Architecture refinement: `.kshrc` is shell-agnostic ONLY. Bash-specific configs (PS1, shopt) moved to `~/.bashrc`; Zsh-specific configs stay in `~/.zshrc`. Putting Bash PS1 in `.kshrc` causes literal escape sequence output when sourced in Zsh. [CLAUDE]
     - **2026-03** — Gemini Mandates: Added Code Hygiene, Reload Protocol, Tool Discipline (No printf/sed/redirection), and Sudo Privilege restrictions.
-    - **2026-03** — Cursor AI installed and managed via a sovereign script in `~/Work/sh/cursor/install_cursor.sh` (AppImage in `~/Applications/`, wrapper in `~/.local/bin/cursor`, extracted icons) to ensure stability on Ubuntu 24.04+.
+    - **2026-05** — Cursor AI on Ubuntu: official `.deb` only (`/usr/bin/cursor`, `/usr/share/cursor/`). Legacy AppImage extract + `~/.local/bin/cursor` wrapper removed; see `~/.agents/skills/k-code/references/cursor.md`.
     - **Ongoing** — `bw-env`: secrets injected into RAM via `/dev/shm`, auto-lock on sleep/screen-lock via D-Bus.
     - **Ongoing** — Using `plocate` for high-speed file searching (faster than `find`).
     - **Ongoing** — Homelab Architecture (`KpihX-Labs`): Proxmox on 802.1X network, Docker-Host LXC, Tailscale Overlay (Split DNS), Cloudflare Tunnel (Zero Trust), Traefik (DNS-01), GitLab CI/CD, and Watchdog self-healing.

@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.9.2] — 2026-04-20
+
+### Added
+- [x] `win11_usb_install.md` — Windows 11 installation on external USB SSD: workaround for 24H2 bug (0x80070001) and manual bypass of the USB installation block using `diskpart`, `DISM`, and `bcdboot`.
+
+### Changed
+- [x] `_sidebar.md`: added Windows 11 USB Install tutorial link.
+
+
 ## [0.9.1] — 2026-04-07
 
 ### Added
