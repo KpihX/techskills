@@ -19,6 +19,8 @@
   - [🐚 Zsh + env](zsh_env.md)
   - [🧹 Cleanup Suite](clean.md)
   - [📧 m365 CLI — Microsoft 365](m365-cli.md)
+  - [🌐 gws CLI — Google Workspace](gws-cli.md)
+  - [☁️ Cloud hub — skill routing map](cloud-hub.md)
   - [☁️ Cloudflare CLI (flarectl)](cloudflare.md)
   - [💿 Windows 11 USB Install](win11_usb_install.md)
 
