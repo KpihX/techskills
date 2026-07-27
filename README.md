@@ -35,6 +35,7 @@ No theory, no made-up examples. Everything here was lived on my machine and docu
 | [🤖 tg — Telegram CLI](tg.md) | Bot API + Telethon user API — send, read, manage bots and personal chats from the terminal |
 | [📧 m365 CLI — Microsoft 365](m365-cli.md) | Mail, calendar, OneDrive via Graph API — device code auth, personal accounts |
 | [☁️ Cloudflare CLI (flarectl)](cloudflare.md) | Zone and DNS management from the terminal — CF_API_TOKEN via bw-env |
+| [🖥️ ASUS VE228 Stretch Fix](ubuntu-asus-ve228-stretch-fix.md) | Prevent vertical resolution stretching on Wayland using Tiling Shell |
 
 ## 🔌 MCPs
 

@@ -1,5 +1,46 @@
 # Changelog
 
+## [0.9.7] — 2026-07-27
+
+### Added
+- [x] `ubuntu-asus-ve228-stretch-fix.md` — Full journey from EDID hacks to Tiling Shell solution for display stretching on Wayland
+
+---
+
+## [0.9.6] — 2026-05-26
+
+### Added
+- [x] `ubuntu-deleted-files-recovery.md` — TL;DR + links to canonical `k-optim/references/ubuntu-deleted-files-recovery.md` (GNOME thumbnails, PhotoRec, extundelete)
+
+---
+
+## [0.9.5] — 2026-05-26
+
+### Removed
+- [x] Browsh + Firefox (apt packages, Mozilla snap, `browsh/browsh` Docker image, tmux session `browsh`, `browsh.ksh`, `techskills/browsh.md`) — experiment abandoned; use `edge-agent` for browser workflows
+
+---
+
+## [0.9.4] — 2026-05-26
+
+### Added
+- [x] `k-browser/assets/browsh.ksh` — removed in 0.9.5
+
+### Changed
+- [x] `browsh.md` — removed in 0.9.5
+
+---
+
+## [0.9.3] — 2026-05-26
+
+### Added
+- [x] `browsh.md` — Browsh trial (later removed)
+
+### Changed
+- [x] `_sidebar.md`: Browsh link (reverted in 0.9.5)
+
+---
+
 ## [0.9.2] — 2026-04-20
 
 ### Added
