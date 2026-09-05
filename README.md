@@ -71,6 +71,21 @@ No theory, no made-up examples. Everything here was lived on my machine and docu
 | [✅ tick-mcp](mcps/tick-mcp.md) | TickTick MCP — 71 tools, stdio + HTTP transport, V1+V2 API |
 | [💬 whats-mcp](mcps/whats-mcp.md) | WhatsApp MCP — 64 tools, Baileys, dual transport, Telegram admin bridge |
 
+## 🔁 Proxies — the solo successors
+
+MCPs work inside MCP hosts only. The **proxies** port the same catalogs to plain shell binaries — no MCP runtime, baked-in `--help` per action, HITL approval on writes, verified destructive calls. For solo (human + script + cron) usage they are strictly more reliable than the MCPs they replace.
+
+| Tutorial | Topic |
+|----------|-------|
+| [🔁 Proxies](proxies/proxies.md) | Shared ADN: `do`/`admin`, meta+data envelope, HITL, autosave — learn once, drive all seven |
+| [🤖 tg-proxy](proxies/tg-proxy.md) | Telegram Bot API + Telethon user API — 24 actions, folders, webhooks |
+| [✅ tick-proxy](proxies/tick-proxy.md) | TickTick V1+V2 — 52 actions, verified composites around silent API drops |
+| [🔒 ts-proxy](proxies/ts-proxy.md) | Tailscale API — 44 schema-validated actions, payload-driven CLI |
+| [📧 mail-proxy](proxies/mail-proxy.md) | IMAP+SMTP+Zimbra — 37 actions, safety-ladder deletes, send-as aliases |
+| [🌐 browser-proxy](proxies/browser-proxy.md) | Visible Edge automation — 71 actions, daemon + extension bridge |
+| [💼 link-proxy](proxies/link-proxy.md) | LinkedIn REST v2 — 10 actions, 60-day token ritual |
+| [💬 whats-proxy](proxies/whats-proxy.md) | WhatsApp via Baileys — 68 actions, guarded daemon, receipt honesty |
+
 ## 🐚 Shell Commands
 
 | Tutorial | Topic |

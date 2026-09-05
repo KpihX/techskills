@@ -42,6 +42,16 @@
   - [✅ tick-mcp — TickTick](mcps/tick-mcp.md)
   - [💬 whats-mcp — WhatsApp](mcps/whats-mcp.md)
 
+- **🔁 Proxies**
+  - [🔁 Proxies — Solo CLIs](proxies/proxies.md)
+  - [🤖 tg-proxy — Telegram](proxies/tg-proxy.md)
+  - [✅ tick-proxy — TickTick](proxies/tick-proxy.md)
+  - [🔒 ts-proxy — Tailscale](proxies/ts-proxy.md)
+  - [📧 mail-proxy — Mail](proxies/mail-proxy.md)
+  - [🌐 browser-proxy — Edge](proxies/browser-proxy.md)
+  - [💼 link-proxy — LinkedIn](proxies/link-proxy.md)
+  - [💬 whats-proxy — WhatsApp](proxies/whats-proxy.md)
+
 - **🐚 Shell Commands**
   - [🔧 awk](sh/awk_tutorial.md)
   - [✂️ sed](sh/sed_tutorial.md)

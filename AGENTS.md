@@ -236,6 +236,8 @@ techskills/
 │   └── assets/         ← Per-domain screenshots (e.g. waveterm connections/secrets)
 │       └── templates/  ← Template files + AGENTS.md index (no more root templates/)
 ├── mcps/               ← MCP server tutorials (bw-mcp, tick-mcp, whats-mcp)
+├── proxies/            ← Solo proxy CLIs: proxies.md (entry/ADN) + 1 page per proxy
+│                         (tg, tick, ts, mail, browser, link, whats — from live --help)
 ├── sh/                 ← Native shell command tutorials (awk, sed, grep, regex…)
 │   │                      STRICT RULE: sh/ contains ONLY tutorials about Unix/shell
 │   │                      built-ins and native commands. NOT tool installs, NOT apps.

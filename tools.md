@@ -476,6 +476,7 @@ uv tool install --editable .
 
 **Full documentation (architecture, Bot API, Telethon user API, config, security):**
 → [github.com/KpihX/tg](https://github.com/KpihX/tg) · [gitlab.com/kpihx/tg](https://gitlab.com/kpihx/tg)
+**Proxy (solo):** [tg-proxy](proxies/tg-proxy.md) — 24 actions, `tg-proxy do <action>`, BotFather flows included.
 
 ---
 
@@ -507,6 +508,8 @@ ln -sf ~/go/bin/flarectl ~/.local/bin/flarectl
 
 ## 🔌 MCP Servers
 
+> **Solo usage? Prefer the proxies.** Each MCP below has a non-MCP twin — same catalog as a plain shell binary (`<proxy> do <action>`, baked-in `--help`, HITL on writes, no MCP runtime). More reliable for humans, scripts, and cron. Full story: [🔁 Proxies](proxies/proxies.md).
+
 ### bw-mcp — Bitwarden AI-Blind Proxy
 
 Security-hardened MCP proxy between LLMs and the Bitwarden CLI. The model can organize your entire vault (rename, move, tag) while being physically incapable of reading any secret value. 7-layer defense: Pydantic validation, force-redact, Zenity HITL, ACID engine, WAL, LIFO rollback, full audit trail.
@@ -533,6 +536,7 @@ uv tool install --editable .   # local fallback
 
 → **Full guide:** [mcps/tick-mcp.md](mcps/tick-mcp.md) — tool categories, Claude Code config, API gotchas.
 **Repos:** [GitHub](https://github.com/KpihX/tick-mcp) · [GitLab](https://gitlab.com/kpihx-labs/tick-mcp)
+**Proxy (solo):** [tick-proxy](proxies/tick-proxy.md) — 52 actions, `tick-proxy do <action>`, verified composites.
 
 ---
 
@@ -548,6 +552,7 @@ npm link                       # local fallback (npm global)
 
 → **Full guide:** [mcps/whats-mcp.md](mcps/whats-mcp.md) — tool categories, pairing, operator surfaces.
 **Repos:** [GitHub](https://github.com/KpihX/whats-mcp) · [GitLab](https://gitlab.com/kpihx-labs/whats-mcp)
+**Proxy (solo):** [whats-proxy](proxies/whats-proxy.md) — 68 actions, guarded daemon, `whats-proxy do <action>`.
 
 ### desk-mcp — Desktop Automation MCP
 
@@ -581,6 +586,7 @@ mail-admin credentials set poly <login> <pass>   # live update without restart
 ```
 
 **Repos:** [GitHub](https://github.com/KpihX/mail-mcp) · [GitLab](https://gitlab.com/kpihx-labs/mail-mcp)
+**Proxy (solo):** [mail-proxy](proxies/mail-proxy.md) — 37 actions, `mail-proxy do <action>`, Zimbra tags, bounce probes.
 
 ### linkedin-mcp — LinkedIn MCP Server
 
@@ -608,6 +614,7 @@ Day 60 → token invalid — re-run auth
 ```
 
 **Repos:** [GitHub](https://github.com/KpihX/linkedin-mcp) · [GitLab](https://gitlab.com/kpihx-labs/linkedin-mcp)
+**Proxy (solo):** [link-proxy](proxies/link-proxy.md) — 10 actions, `link-proxy do <action>`, official REST v2.
 
 ---
 

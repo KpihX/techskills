@@ -10,6 +10,7 @@
 - [ ] `apps/tg.md` — Telegram CLI (Bot API + Telethon user API)
 
 ## Done
+- [x] `proxies/` — entry + 7 per-proxy tutorials from live --help + tools.md proxy cross-links
 - [x] Reorg 0.10.0 — tutorials into `system/` · `dev/` · `net/` · `apps/` · `scripts/`, all refs base-relative
 - [x] `dev/npm-prefix.md` — Version-agnostic npm global prefix (`~/.npm-global`), avoiding nvm traps
 - [x] `automount_drive.md` — Universal Auto-Mount for External Disks tutorial
