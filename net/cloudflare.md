@@ -1,6 +1,10 @@
 # ☁️ Cloudflare CLI (flarectl)
 
-> Manage Cloudflare DNS, zones, and records from the terminal — no browser, no dashboard.
+> **Agent skill (SOT):** `$HOME/.agents/skills/k-cloudflare/SKILL.md` · **Setup:** `k-cloudflare/references/setup.md`  
+> **Workstation:** `flarectl` only · **`cloudflared` quarantined** → `k-cloudflare/references/cloudflared-quarantine.md` (quick tunnel / localhost)  
+> **Email Routing (live):** `k-cloudflare/references/email-routing-ops.md` — `kpihx@kpihx-labs.com` → Gmail via API (`curl`, not `flarectl`)
+
+Manage Cloudflare DNS, zones, and records from the terminal — no browser, no dashboard. Prod tunnel connector runs on **homelab server**, not the dev laptop.
 
 Managing `kpihx-labs.com` DNS from the browser gets tedious fast — especially when you need to add or update records for Traefik, Let's Encrypt, or new homelab services. `flarectl` is Cloudflare's official Go CLI: it reads a single API token and gives you full zone and DNS management from your terminal.
 

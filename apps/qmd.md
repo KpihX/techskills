@@ -2,7 +2,7 @@
 
 > **Machine:** KpihX-Ubuntu | **Date:** 2026-03-24
 
-I have a large amount of Markdown notes in `$HOME/Work/techskills` and `$HOME/Work/Homelab/presentation`. Using `grep` works, but it's limited to exact keyword matching. I wanted something smarter, capable of understanding the intent behind my searches. That's when I discovered `qmd`.
+I have a large amount of Markdown notes in `$HOME/Work/techskills` and `$HOME/Work/KpihX-Labs/Homelab/presentation`. Using `grep` works, but it's limited to exact keyword matching. I wanted something smarter, capable of understanding the intent behind my searches. That's when I discovered `qmd`.
 
 `qmd` is a local search engine that uses AI models to "understand" the meaning of your notes and provide much more relevant results. Here's how I installed and configured it to become an essential building block of my "external memory."
 
@@ -28,14 +28,14 @@ qmd collection list
 Historically, I started from two primary knowledge sources:
 
 1.  `$HOME/Work/techskills`
-2.  `$HOME/Work/Homelab/presentation`
+2.  `$HOME/Work/KpihX-Labs/Homelab/presentation`
 
 So I created two `qmd` "collections":
 
 ```bash
 # Historical bootstrap
 qmd collection add $HOME/Work/techskills/ -n techskills --mask "**/*.{md,yml,yaml,toml}"
-qmd collection add $HOME/Work/Homelab/presentation/ -n presentation --mask "**/*.{md,yml,yaml,toml}"
+qmd collection add $HOME/Work/KpihX-Labs/Homelab/presentation/ -n presentation --mask "**/*.{md,yml,yaml,toml}"
 ```
 
 The important point today is different: keep the index **hot-only**.

@@ -18,24 +18,50 @@ No theory, no made-up examples. Everything here was lived on my machine and docu
 
 ## 📚 Tutorials
 
+### 🖥️ System
+
 | Tutorial | Topic |
 |----------|-------|
-| [🔒 Tailscale](tailscale.md) | MagicDNS permanent fix, SSH config, Bitwarden SSH agent |
-| [🌐 GitHub Pages + Docsify](github-pages.md) | Turn a Markdown repo into a Docsify site — local + online, classic vs `gh` CLI |
-| [🐙 GitHub CLI (gh)](gh.md) | Repos, PRs, issues, releases, CI, raw API — all from the terminal |
-| [🦊 GitLab CLI (glab)](glab.md) | Repos, MRs, issues, pipelines, CI/CD, secrets — GitLab native CLI |
-| [📦 Node.js & npm prefix](npm-prefix.md) | nvm, `.nvmrc`, and the `~/.npm-global` fix for tools that auto-update without nvm sourced |
-| [🥟 Bun — JS/TS Runtime](bun.md) | Sovereign JS/TS toolchain — runtime, package manager, test runner, bundler in one binary |
-| [🧠 qmd — Local Semantic Search](qmd.md) | AI-powered semantic search for your Markdown notes and code |
-| [🐚 Zsh + env](zsh_env.md) | `.zshenv`/`.zprofile`/`.zshrc` triptych, GUI app secret gap, `zsh -l -c` injection pattern |
-| [🔑 bw-env — Secret Injection](bw-env.md) | Bitwarden-backed secrets in RAM: unlock, inject, auto-lock on sleep |
-| [🌊 WaveTerm](waveterm.md) | Block-based terminal — sidebar widgets, SSH, BYOK AI modes (Groq, Mistral), wsh secrets |
-| [💾 Automount External Disk](automount_drive.md) | Universal "lazy" mount via fstab + x-systemd.automount — mount it when you touch it |
-| [🧹 Cleanup Suite](clean.md) | Modular disk cleanup — Snap, cache, Docker, AI models, Work artifacts — 4 risk levels |
-| [🤖 tg — Telegram CLI](tg.md) | Bot API + Telethon user API — send, read, manage bots and personal chats from the terminal |
-| [📧 m365 CLI — Microsoft 365](m365-cli.md) | Mail, calendar, OneDrive via Graph API — device code auth, personal accounts |
-| [☁️ Cloudflare CLI (flarectl)](cloudflare.md) | Zone and DNS management from the terminal — CF_API_TOKEN via bw-env |
-| [🖥️ ASUS VE228 Stretch Fix](ubuntu-asus-ve228-stretch-fix.md) | Prevent vertical resolution stretching on Wayland using Tiling Shell |
+| [💾 Automount External Disk](system/automount_drive.md) | Universal "lazy" mount via fstab + x-systemd.automount — mount it when you touch it |
+| [🧹 Cleanup Suite](system/clean.md) | Modular disk cleanup — Snap, cache, Docker, AI models, Work artifacts — 4 risk levels |
+| [🐚 Zsh + env](system/zsh_env.md) | `.zshenv`/`.zprofile`/`.zshrc` triptych, GUI app secret gap, `zsh -l -c` injection pattern |
+| [🗂️ Nautilus Default](system/nautilus_default_file_manager.md) | Restore GNOME Nautilus as default file manager, purge Nemo |
+| [🖥️ ASUS VE228 Stretch Fix](system/ubuntu-asus-ve228-stretch-fix.md) | Prevent vertical resolution stretching on Wayland using Tiling Shell |
+| [🖼️ Recover deleted images](system/ubuntu-deleted-files-recovery.md) | ext4 undelete runbook — thumbnails, PhotoRec, extundelete |
+| [💿 Windows 11 USB Install](system/win11_usb_install.md) | Portable SSD install — installer bug + policy block bypass |
+| [🍷 Wine](system/wine.md) | 32-bit isolation and HiDPI display for Windows apps |
+| [🔑 bw-env — Secret Injection](system/bw-env.md) | Bitwarden-backed secrets in RAM: unlock, inject, auto-lock on sleep *(planned — see TODO.md)* |
+
+### 🧑‍💻 Dev
+
+| Tutorial | Topic |
+|----------|-------|
+| [🐙 GitHub CLI (gh)](dev/gh.md) | Repos, PRs, issues, releases, CI, raw API — all from the terminal |
+| [🦊 GitLab CLI (glab)](dev/glab.md) | Repos, MRs, issues, pipelines, CI/CD, secrets — GitLab native CLI |
+| [🌐 GitHub Pages + Docsify](dev/github-pages.md) | Turn a Markdown repo into a Docsify site — local + online, classic vs `gh` CLI |
+| [📦 Node.js & npm prefix](dev/npm-prefix.md) | nvm, `.nvmrc`, and the `~/.npm-global` fix for tools that auto-update without nvm sourced |
+| [🥟 Bun — JS/TS Runtime](dev/bun.md) | Sovereign JS/TS toolchain — runtime, package manager, test runner, bundler in one binary |
+| [📦 fnm — Fast Node Manager](dev/fnm.md) | Rust Node version manager — dynamic PATH, `--use-on-cd`, replaces nvm |
+| [☁️ Azure CLI](dev/azure-cli.md) | Deactivated — no subscription; `m365` only |
+
+### 🌐 Net
+
+| Tutorial | Topic |
+|----------|-------|
+| [🔒 Tailscale](net/tailscale.md) | MagicDNS permanent fix, SSH config, Bitwarden SSH agent |
+| [☁️ Cloudflare CLI (flarectl)](net/cloudflare.md) | Zone and DNS management from the terminal — CF_API_TOKEN via bw-env |
+| [☁️ Cloud hub](net/cloud-hub.md) | Cloud & productivity tool map — skill routing |
+
+### 📱 Apps
+
+| Tutorial | Topic |
+|----------|-------|
+| [🌊 WaveTerm](apps/waveterm.md) | Block-based terminal — sidebar widgets, SSH, BYOK AI modes (Groq, Mistral), wsh secrets |
+| [🤖 Edge agent CDP setup](apps/edge-agent-cdp-setup.md) | Visible Edge profile + MCP bridge for browser automation |
+| [📧 m365 CLI — Microsoft 365](apps/m365-cli.md) | Mail, calendar, OneDrive via Graph API — device code auth, personal accounts |
+| [🌐 gws CLI — Google Workspace](apps/gws-cli.md) | Gmail, Drive, Calendar, Sheets from the terminal — Discovery-based JSON CLI |
+| [🧠 qmd — Local Semantic Search](apps/qmd.md) | AI-powered semantic search for your Markdown notes and code |
+| [🤖 tg — Telegram CLI](apps/tg.md) | Bot API + Telethon user API — send, read, manage bots and chats *(planned — see tools.md for repos)* |
 
 ## 🔌 MCPs
 

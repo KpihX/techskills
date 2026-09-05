@@ -3,28 +3,39 @@
 - **Reference**
   - [🏠 Home](README.md)
   - [🧰 Tools & Apps](tools.md)
-  - [📄 Templates](templates/README.md)
+  - [📄 Templates](templates/AGENTS.md)
 
-- **Tutorials**
-  - [🔒 Tailscale](tailscale.md)
-  - [🌐 GitHub Pages + Docsify](github-pages.md)
-  - [🐙 GitHub CLI (gh)](gh.md)
-  - [🦊 GitLab CLI (glab)](glab.md)
-  - [📦 Node.js & npm prefix](npm-prefix.md)
-  - [🥟 Bun — JS/TS Runtime](bun.md)
-  - [🧠 qmd — Local Semantic Search](qmd.md)
-  - [💾 Automount External Disk](automount_drive.md)
-  - [🔑 bw-env — Secret Injection](bw-env.md)
-  - [🌊 WaveTerm](waveterm.md)
-  - [🐚 Zsh + env](zsh_env.md)
-  - [🧹 Cleanup Suite](clean.md)
-  - [🖼️ Recover deleted images (ext4)](ubuntu-deleted-files-recovery.md)
-  - [📧 m365 CLI — Microsoft 365](m365-cli.md)
-  - [🌐 gws CLI — Google Workspace](gws-cli.md)
-  - [☁️ Cloud hub — skill routing map](cloud-hub.md)
-  - [☁️ Cloudflare CLI (flarectl)](cloudflare.md)
-  - [💿 Windows 11 USB Install](win11_usb_install.md)
-  - [🖥️ ASUS VE228 Stretch Fix](ubuntu-asus-ve228-stretch-fix.md)
+- **🖥️ System**
+  - [💾 Automount External Disk](system/automount_drive.md)
+  - [🧹 Cleanup Suite](system/clean.md)
+  - [🐚 Zsh + env](system/zsh_env.md)
+  - [🗂️ Nautilus Default File Manager](system/nautilus_default_file_manager.md)
+  - [🖥️ ASUS VE228 Stretch Fix](system/ubuntu-asus-ve228-stretch-fix.md)
+  - [🖼️ Recover deleted images (ext4)](system/ubuntu-deleted-files-recovery.md)
+  - [💿 Windows 11 USB Install](system/win11_usb_install.md)
+  - [🍷 Wine](system/wine.md)
+  - [🔑 bw-env — Secret Injection](system/bw-env.md)
+
+- **🧑‍💻 Dev**
+  - [🐙 GitHub CLI (gh)](dev/gh.md)
+  - [🦊 GitLab CLI (glab)](dev/glab.md)
+  - [🌐 GitHub Pages + Docsify](dev/github-pages.md)
+  - [📦 Node.js & npm prefix](dev/npm-prefix.md)
+  - [🥟 Bun — JS/TS Runtime](dev/bun.md)
+  - [📦 fnm — Fast Node Manager](dev/fnm.md)
+  - [☁️ Azure CLI (off)](dev/azure-cli.md)
+
+- **🌐 Net**
+  - [🔒 Tailscale](net/tailscale.md)
+  - [☁️ Cloudflare CLI (flarectl)](net/cloudflare.md)
+  - [☁️ Cloud hub — skill routing map](net/cloud-hub.md)
+
+- **📱 Apps**
+  - [🌊 WaveTerm](apps/waveterm.md)
+  - [🤖 Edge agent CDP setup](apps/edge-agent-cdp-setup.md)
+  - [📧 m365 CLI — Microsoft 365](apps/m365-cli.md)
+  - [🌐 gws CLI — Google Workspace](apps/gws-cli.md)
+  - [🧠 qmd — Local Semantic Search](apps/qmd.md)
 
 - **🔌 MCPs**
   - [🔐 bw-mcp — Bitwarden Proxy](mcps/bw-mcp.md)

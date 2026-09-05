@@ -6,9 +6,33 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="description" content="Ubuntu-focused knowledge base. Real problems, real fixes, documented as they happen on KpihX-Ubuntu.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <link rel="icon" href="assets/techskills_logo-bgone.png" type="image/png" />
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify-darklight-theme@latest/dist/style.min.css" title="docsify-darklight-theme" type="text/css" />
   <style>
-    /* --- VS CODE STYLE UI --- */
+    /* Brand banner as the one uniform background (no boxes, no dissonance) — same as sciencurious */
+    body {
+      background: url('assets/techskills_banner.png') center / cover no-repeat fixed;
+    }
+    /* Uniform theme veil over the whole page: readability, identical both themes */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: var(--background);
+      opacity: 0.3;
+      pointer-events: none;
+      z-index: 0;
+    }
+    main {
+      position: relative;
+      z-index: 1;
+    }
+    /* Main logo in sidebar — same proportions as sciencurious */
+    .app-name-link img {
+      max-height: 200px;
+      width: 92%;
+      border-radius: 14px;
+    }
 
     .sidebar {
       display: flex !important;
@@ -68,6 +92,7 @@
   <script>
     window.$docsify = {
       name: '🛠️ TechSkills',
+      logo: 'assets/techskills_logo-bgone.png',
       repo: 'https://github.com/kpihx/techskills',
       loadSidebar: true,
       subMaxLevel: 2,

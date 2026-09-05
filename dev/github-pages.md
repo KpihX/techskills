@@ -58,7 +58,7 @@ and `.nojekyll`. Let me walk through each.
 This is the only non-Markdown file. It loads the Docsify runtime from CDN
 and configures the site — theme, search, sidebar, dark/light toggle.
 
-> **Template available:** [`templates/github-pages-index.html`](https://github.com/kpihx/techskills/blob/master/templates/github-pages-index.html)
+> **Template available:** [`templates/github-pages-index.html`](https://gitlab.com/kpihx/agents/-/blob/main/skills/k-git-pages/assets/github-pages-index.html) (real source: `.agents/skills/k-git-pages/assets/github-pages-index.html`)
 > Copy it to your repo root, rename to `index.html`, replace the 4 placeholders
 > (`SITE_TITLE`, `SITE_NAME`, `GITHUB_REPO_URL`, `SEARCH_PLACEHOLDER`).
 > The full annotated version is below for reference.
@@ -286,7 +286,7 @@ git remote add github git@github.com:yourname/techskills.git
 git push github HEAD
 ```
 
-> For a full `gh` CLI guide — repos, PRs, issues, releases — see [gh.md](gh.md).
+> For a full `gh` CLI guide — repos, PRs, issues, releases — see [gh.md](dev/gh.md).
 
 ---
 
@@ -388,4 +388,4 @@ curl -s -o /dev/null -w "%{http_code}" https://yourname.github.io/techskills/_si
 - [Docsify documentation](https://docsify.js.org)
 - [docsify-darklight-theme](https://github.com/boopathikumar018/docsify-darklight-theme)
 - [GitHub Pages docs](https://docs.github.com/en/pages)
-- [GitHub CLI (`gh`) full guide](gh.md)
+- [GitHub CLI (`gh`) full guide](dev/gh.md)

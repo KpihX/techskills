@@ -1,6 +1,19 @@
 # Changelog
 
-## [0.9.7] — 2026-07-27
+## [0.10.0] — 2026-09-05
+
+### Removed
+- [x] `scripts/` (one-shot Moodle TD downloaders, out of scope) · `templates/config.py`, `github-pages-index.html`, `pyproject.toml`, `_sidebar.md`, `README.md` (gitlab skill URLs are the single source) · `.agent/AGENT.md`, `CLAUDE.md`, `GEMINI.md` (agent symlinks dropped) — all definitive
+
+### Changed
+- [x] Reorg tutorials into domains (sciencurious model): `system/` (8: automount, clean, zsh_env, nautilus, ubuntu-asus-ve228, ubuntu-recovery, win11_usb, wine) · `dev/` (7: gh, glab, github-pages, npm-prefix, bun, fnm, azure-cli) · `net/` (3: tailscale, cloudflare, cloud-hub) · `apps/` (5: waveterm, edge-agent-cdp-setup, m365-cli, gws-cli, qmd) · `apps/assets/` (waveterm screenshots + JSON templates, `assets/` back to brand-only)
+- [x] All refs updated to base-relative paths (`system/clean.md`, never `../`) — `_sidebar.md`, `README.md`, `tools.md` (12 links), cross-links (cloud-hub, fnm, gh, github-pages, glab, npm-prefix, tick-mcp, ubuntu-recovery, waveterm, zsh_env), `azure-cli.md` absolute path, `AGENTS.md` structure + placement rule
+- [x] Fixed sidebar `templates/README.md` → `templates/AGENTS.md` (README deleted in working tree, AGENTS.md is the index)
+- [x] Sidebar/README now list all tutorials incl. previously orphaned `fnm.md`, `wine.md`, `nautilus_default_file_manager.md`, `edge-agent-cdp-setup.md`, `azure-cli.md`, `gws-cli.md`, `cloud-hub.md`, `win11_usb_install.md`
+- [x] `templates/*.json` → `apps/assets/` (waveterm-widgets, waveterm-ai-modes colocated with tutorial screenshots) — 6 absolute blob URLs updated (tools.md, waveterm.md, templates/AGENTS.md) + AGENTS.md templates workflow (`templates/README.md` → `templates/AGENTS.md`, per-domain homes)
+- [x] Forward links kept for planned tutorials: `system/bw-env.md`, `apps/tg.md` (see TODO.md) — 404 until written
+
+---
 
 ### Added
 - [x] `ubuntu-asus-ve228-stretch-fix.md` — Full journey from EDID hacks to Tiling Shell solution for display stretching on Wayland

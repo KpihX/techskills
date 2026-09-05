@@ -18,5 +18,5 @@
 
 ## Runbooks
 
-- [gws CLI](gws-cli.md)
-- [m365 CLI](m365-cli.md)
+- [gws CLI](apps/gws-cli.md)
+- [m365 CLI](apps/m365-cli.md)

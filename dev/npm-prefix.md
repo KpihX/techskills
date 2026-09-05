@@ -11,8 +11,9 @@ everything. That works fine for a one-off script. It breaks the moment you have
 two projects requiring different Node versions, or when you install a CLI tool
 globally and it conflicts with a system package.
 
-The solution most developers land on is **nvm** — the Node Version Manager.
-Here's how it works, and why it's the right starting point.
+The solution most developers land on is **fnm** (or nvm) — a Node version manager.
+fnm is the current choice on KpihX-Ubuntu (Rust-based, dynamic PATH, ~15ms init).
+See [fnm.md](dev/fnm.md) for the migration rationale.
 
 ---
 
@@ -316,15 +317,18 @@ npm config get prefix
 
 ---
 
-## ⚠️ Gotcha — the `.npmrc` prefix vs nvm warning (keep `prefix=`, ignore the warning)
+## ⚠️ Gotcha — the `.npmrc` prefix vs version manager warning (keep `prefix=`, ignore the warning)
 
-Once you set `prefix=~/.npm-global` in `~/.npmrc`, every shell that sources
-nvm will print a warning on startup:
+Once you set `prefix=~/.npm-global` in `~/.npmrc`, some version managers
+(nvm in particular) print a warning on startup:
 
 ```
 Your user's .npmrc file has a prefix setting which is incompatible with nvm.
 Run `nvm use --delete-prefix v22.x.x --silent` to unset it.
 ```
+
+fnm does **not** print this warning — it has no shell function that checks
+`.npmrc`. The prefix works transparently with fnm.
 
 **Do not run that command** — it would remove the prefix you just set.
 

@@ -126,7 +126,7 @@ auto-resume sessions, pass the right flag:
 - Codex: `resume <session-id>` (get the ID from `~/.codex/`)
 - Gemini / Copilot: `--resume 1`
 
-> **Template:** [`templates/waveterm-widgets.json`](https://github.com/kpihx/techskills/blob/master/templates/waveterm-widgets.json) — full template with claude, codex, gemini, copilot, vibe, github, gitlab. Copy to `~/.config/waveterm/widgets.json`, fill in `BINARY_PATH_*` and `SESSION_ID_*` placeholders.
+> **Template:** [`apps/assets/waveterm-widgets.json`](https://github.com/kpihx/techskills/blob/master/apps/assets/waveterm-widgets.json) — full template with claude, codex, gemini, copilot, vibe, github, gitlab. Copy to `~/.config/waveterm/widgets.json`, fill in `BINARY_PATH_*` and `SESSION_ID_*` placeholders.
 
 ---
 
@@ -187,7 +187,7 @@ startup overhead per widget. The `-l` flag alone sources login files only
 not `~/.zprofile`. Since `~/.kshrc` is sourced by both `~/.zprofile` and
 `~/.zshrc`, either path works — but `-l` is faster (no oh-my-zsh).
 
-> **Full tutorial:** [zsh_env.md](zsh_env.md) — the complete `.zshenv` /
+> **Full tutorial:** [zsh_env.md](system/zsh_env.md) — the complete `.zshenv` /
 > `.zprofile` / `.zshrc` triptych, when each file is sourced, and how
 > this fits into the broader secret injection architecture.
 
@@ -212,7 +212,7 @@ With `conn:wshenabled: true`, WaveTerm installs `wsh` on the remote host —
 its shell integration that enables block features (file browser, port
 forwarding, remote `wsh` commands) over the same SSH connection.
 
-![Wave Config — Connections](assets/waveterm-connections.png)
+![Wave Config — Connections](apps/assets/waveterm-connections.png)
 
 You can also manage connections from **Wave Config → Connections** (the gear
 icon in the top-left). The UI writes to `connections.json` directly.
@@ -248,7 +248,7 @@ The AI modes config looks like this:
 The `ai:apitokensecretname` field doesn't store the key directly — it names
 a **wsh secret** that WaveTerm reads at runtime. That's the next section.
 
-> **Template:** [`templates/waveterm-ai-modes.json`](https://github.com/kpihx/techskills/blob/master/templates/waveterm-ai-modes.json) — 6 models pre-configured: Groq Scout, Groq 120B, Groq Maverick, Mistral Large, Codestral, Pixtral. Copy the content into Wave Config → Wave AI Modes and set your secrets.
+> **Template:** [`apps/assets/waveterm-ai-modes.json`](https://github.com/kpihx/techskills/blob/master/apps/assets/waveterm-ai-modes.json) — 6 models pre-configured: Groq Scout, Groq 120B, Groq Maverick, Mistral Large, Codestral, Pixtral. Copy the content into Wave Config → Wave AI Modes and set your secrets.
 
 ---
 
@@ -272,7 +272,7 @@ wsh secret get GROQ_API_KEY
 Secrets are stored encrypted in WaveTerm's local database — not in env vars,
 not in files. The AI modes config reads them by name at runtime.
 
-![Wave Config — Secrets](assets/waveterm-secrets.png)
+![Wave Config — Secrets](apps/assets/waveterm-secrets.png)
 
 ---
 

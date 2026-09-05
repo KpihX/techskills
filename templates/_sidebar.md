@@ -1,1 +1,0 @@
-/home/kpihx/.agents/skills/k-git-pages/assets/_sidebar.md

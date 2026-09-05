@@ -340,4 +340,4 @@ gh api user | jq '{login, name, public_repos}'
 
 - [GitHub CLI manual](https://cli.github.com/manual/)
 - [GitHub REST API](https://docs.github.com/en/rest)
-- [GitLab CLI (`glab`) guide](glab.md)
+- [GitLab CLI (`glab`) guide](dev/glab.md)

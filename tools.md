@@ -60,7 +60,7 @@ AI models (Ollama, HuggingFace), and `~/Work/` project artifacts.
 ~/Work/sh/clean/clean_all.sh --purge    # deep clean (prompted)
 ```
 
-→ **Full guide:** [clean.md](clean.md) — module breakdown, flag levels, automation via systemd.
+→ **Full guide:** [clean.md](system/clean.md) — module breakdown, flag levels, automation via systemd.
 
 ---
 
@@ -98,7 +98,7 @@ curl -fsSL https://tailscale.com/install.sh | sh
 sudo tailscale up
 ```
 
-→ **Full guide:** [tailscale.md](tailscale.md) — MagicDNS fix, SSH config,
+→ **Full guide:** [tailscale.md](net/tailscale.md) — MagicDNS fix, SSH config,
 Bitwarden SSH agent, FQDN hardening.
 
 ---
@@ -123,66 +123,48 @@ sudo systemctl stop rustdesk.service
 
 ## 📦 JS/TS Runtimes
 
-### nvm — Node Version Manager
+ ### fnm — Fast Node Manager (Rust)
 
-Manages multiple Node.js versions in isolation. Each project pins its Node
-version via `.nvmrc`. Global packages stay per-version — no system Node, no
-sudo required.
-
-```bash
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-source ~/.zshrc
-nvm install 22
-nvm alias default 22
-```
-
-→ **Full guide:** [npm-prefix.md](npm-prefix.md) — nvm setup, `.nvmrc` auto-switch hook, the system npm EACCES trap, and the `~/.npm-global` fix for daily-driver CLI tools that auto-update.
-
-**⚠️ Gotcha — `.npmrc` prefix vs `.kshrc` universal hub:**
-
-If you use a `prefix=~/.npm-global` line in `~/.npmrc` **and** source nvm from a
-universal shell hub (`.kshrc`), nvm will warn on every shell start:
-
-```
-Your .npmrc has a prefix setting which is incompatible with nvm.
-Run `nvm use --delete-prefix` to unset it.
-```
-
-**Keep `prefix=` in `~/.npmrc` and ignore the warning.** The warning is cosmetic.
-Removing `prefix=` and using only `NPM_CONFIG_PREFIX` in `~/.kshrc` seems cleaner
-but breaks tool auto-updaters (Codex, Gemini CLI…): they spawn `npm install -g`
-in subprocesses that don't inherit env vars → fall back to system prefix `/usr/local`
-→ EACCES. The `~/.npmrc` file is read by ALL npm invocations unconditionally.
+Manages Node.js versions with dynamic PATH resolution — no shell function
+overhead, no hardcoded version strings. Written in Rust, ~15ms shell init
+(vs ~700ms for nvm). Auto-switches on `cd` via `.nvmrc`/`.node-version`.
 
 ```bash
-# ~/.npmrc — keep this, always:
-# ⚠️ nvm warns about this line — harmless, do NOT remove it.
-prefix=/home/kpihx/.npm-global
+curl -fsSL https://fnm.vercel.app/install | bash -s -- --install-dir "$HOME/.local/share/fnm"
+fnm install 24
+fnm default 24
 ```
 
-Also add `NPM_CONFIG_PREFIX` in `~/.kshrc` as belt-and-suspenders for interactive
-shells, plus the idempotency guard to prevent double-sourcing:
+→ **Full guide:** [fnm.md](dev/fnm.md) — installation, `--use-on-cd` auto-switch,
+systemd service paths, and comparison with nvm.
+
+**Key differences from nvm:**
+
+| Aspect | nvm | fnm |
+|--------|-----|-----|
+| Language | Bash function | Rust binary |
+| Shell init cost | ~700ms (or 0ms with hardcoded PATH) | ~15ms |
+| Version string | Hardcoded in `.kshrc` | Dynamic multishell |
+| Auto-switch on cd | 15-line manual hook | `--use-on-cd` (native) |
+| npm prefix conflict | Warning (cosmetic) | None |
+| Storage | `~/.nvm/` | `~/.local/share/fnm/` |
+
+**npm-global compatibility:** unchanged. Same `.npmrc` prefix config, same
+`NPM_CONFIG_PREFIX` in `.kshrc`, same `~/.npm-global/` for all CLI tools.
 
 ```bash
-# In ~/.kshrc — BEFORE the interactive guard:
-
-# Idempotency guard — prevents double-sourcing when shell configs chain
-if [ -z "$NVM_LOADED" ]; then
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-    nvm use default --silent 2>/dev/null
-    export NVM_LOADED=1
+# ~/.kshrc — fnm block + npm-global belt-and-suspenders
+FNM_PATH="$HOME/.local/share/fnm"
+if [ -d "$FNM_PATH" ]; then
+    export PATH="$FNM_PATH:$PATH"
+    eval "$(fnm env --use-on-cd --shell zsh 2>/dev/null)"
 fi
-
-# Redundant with ~/.npmrc prefix= but reinforces for interactive shells
 export NPM_CONFIG_PREFIX="$HOME/.npm-global"
 export PATH="$HOME/.npm-global/bin:$PATH"
 ```
 
-Also: if `.kshrc` has a `case $- in *i*) ;; *) return ;; esac` guard near the
-top (leftover from `.bashrc` boilerplate), it will silently exit before setting
-any exports in non-interactive shells — breaking MCPs, scripts, and `zsh -l -c`.
-Move that guard to **after** all `export` statements.
+For the `.kshrc` interactive guard: keep it **after** all exports — this
+prevents silent exits from breaking MCPs, scripts, and `zsh -l -c`.
 
 ### Bun — JS/TS Runtime & Package Manager
 
@@ -201,7 +183,7 @@ export PATH="$HOME/.bun/bin:$HOME/.npm-global/bin:$PATH"
 Node.js + nvm are KEPT — Gemini CLI, Codex, Copilot, and Claude Code depend on
 Node. Bun and Node coexist without conflict.
 
-→ **Full guide:** [bun.md](bun.md) — project scaffold, TypeScript strict mode, Biome linter, `bun test`, Docker base image, coexistence with nvm.
+→ **Full guide:** [bun.md](dev/bun.md) — project scaffold, TypeScript strict mode, Biome linter, `bun test`, Docker base image, coexistence with fnm.
 
 ### qmd — Quick Markdown Search
 
@@ -213,7 +195,7 @@ vector search, and hybrid search. Integrates with Git for auto-updates.
 bun install -g @tobilu/qmd
 ```
 
-→ **Full guide:** [qmd.md](qmd.md) — installation, configuration, search modes, Git hooks automation.
+→ **Full guide:** [qmd.md](apps/qmd.md) — installation, configuration, search modes, Git hooks automation.
 
 ---
 
@@ -314,7 +296,7 @@ sudo apt install gh
 gh auth login
 ```
 
-→ **Full guide:** [gh.md](gh.md) — repos, PRs, issues, releases, API, CI.
+→ **Full guide:** [gh.md](dev/gh.md) — repos, PRs, issues, releases, API, CI.
 
 ### glab — GitLab CLI
 
@@ -327,7 +309,7 @@ sudo apt install glab
 glab auth login
 ```
 
-→ **Full guide:** [glab.md](glab.md) — repos, MRs, pipelines, CI/CD, secrets.
+→ **Full guide:** [glab.md](dev/glab.md) — repos, MRs, pipelines, CI/CD, secrets.
 
 ---
 
@@ -345,11 +327,11 @@ client-side at runtime.
 npx docsify-cli serve .
 ```
 
-→ **Full guide:** [github-pages.md](github-pages.md) — setup, `.nojekyll` trap, local preview, GitHub Pages activation.
+→ **Full guide:** [github-pages.md](dev/github-pages.md) — setup, `.nojekyll` trap, local preview, GitHub Pages activation.
 
 **Templates:**
-- [`github-pages-index.html`](https://github.com/kpihx/techskills/blob/master/templates/github-pages-index.html) — ready-to-use `index.html`: VS Code dark theme, search, sidebar, inline code color fix. Copy to repo root, rename to `index.html`, replace the 4 `SITE_*` placeholders.
-- [`_sidebar.md`](https://github.com/kpihx/techskills/blob/master/templates/_sidebar.md) — generic Docsify sidebar with `.nojekyll` reminder. Copy to repo root as `_sidebar.md`.
+- [`github-pages-index.html`](https://gitlab.com/kpihx/agents/-/blob/main/skills/k-git-pages/assets/github-pages-index.html) — ready-to-use `index.html`: VS Code dark theme, search, sidebar, inline code color fix. Copy to repo root, rename to `index.html`, replace the 4 `SITE_*` placeholders. Real source: `.agents/skills/k-git-pages/assets/github-pages-index.html`.
+- [`_sidebar.md`](https://gitlab.com/kpihx/agents/-/blob/main/skills/k-git-pages/assets/_sidebar.md) — generic Docsify sidebar with `.nojekyll` reminder. Copy to repo root as `_sidebar.md`. Real source: `.agents/skills/k-git-pages/assets/_sidebar.md`.
 
 ### grip — GitHub-flavored Markdown preview
 
@@ -439,11 +421,11 @@ Download the `.deb` from [waveterm.dev](https://waveterm.dev):
 sudo dpkg -i waveterm_*.deb
 ```
 
-→ **Full guide:** [waveterm.md](waveterm.md) — sidebar widgets, SSH connections, BYOK AI modes (Groq, Mistral), wsh secrets.
+→ **Full guide:** [waveterm.md](apps/waveterm.md) — sidebar widgets, SSH connections, BYOK AI modes (Groq, Mistral), wsh secrets.
 
 **Templates:**
-- [`waveterm-widgets.json`](https://github.com/kpihx/techskills/blob/master/templates/waveterm-widgets.json) — AI CLI sidebar widgets (claude, codex, gemini, copilot, vibe) + GitHub/GitLab web shortcuts. Copy to `~/.config/waveterm/widgets.json`, fill `BINARY_PATH_*` and `SESSION_ID_*`.
-- [`waveterm-ai-modes.json`](https://github.com/kpihx/techskills/blob/master/templates/waveterm-ai-modes.json) — BYOK AI Modes (Groq Scout, Groq Maverick, Mistral Large, Codestral, Pixtral). Set secrets via `wsh secret set`, paste into Wave Config → Wave AI Modes.
+- [`apps/assets/waveterm-widgets.json`](https://github.com/kpihx/techskills/blob/master/apps/assets/waveterm-widgets.json) — AI CLI sidebar widgets (claude, codex, gemini, copilot, vibe) + GitHub/GitLab web shortcuts. Copy to `~/.config/waveterm/widgets.json`, fill `BINARY_PATH_*` and `SESSION_ID_*`.
+- [`apps/assets/waveterm-ai-modes.json`](https://github.com/kpihx/techskills/blob/master/apps/assets/waveterm-ai-modes.json) — BYOK AI Modes (Groq Scout, Groq Maverick, Mistral Large, Codestral, Pixtral). Set secrets via `wsh secret set`, paste into Wave Config → Wave AI Modes.
 
 ### Warp
 
@@ -474,7 +456,7 @@ chsh -s $(which zsh)
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
 
-→ **Full guide:** [zsh_env.md](zsh_env.md) — `.zshenv` / `.zprofile` / `.zshrc` triptych, when each file is sourced, the `zsh -l -c` secret injection pattern, and the GUI app gap (WaveTerm, VS Code).
+→ **Full guide:** [zsh_env.md](system/zsh_env.md) — `.zshenv` / `.zprofile` / `.zshrc` triptych, when each file is sourced, the `zsh -l -c` secret injection pattern, and the GUI app gap (WaveTerm, VS Code).
 
 ---
 
@@ -506,7 +488,7 @@ npm install -g @pnp/cli-microsoft365
 m365 login --authType deviceCode
 ```
 
-→ **Full guide:** [m365-cli.md](m365-cli.md) — Azure App Registration, device code flow, mail/calendar/OneDrive commands.
+→ **Full guide:** [m365-cli.md](apps/m365-cli.md) — Azure App Registration, device code flow, mail/calendar/OneDrive commands.
 
 ---
 
@@ -519,7 +501,7 @@ go install github.com/cloudflare/cloudflare-go/cmd/flarectl@latest
 ln -sf ~/go/bin/flarectl ~/.local/bin/flarectl
 ```
 
-→ **Full guide:** [cloudflare.md](cloudflare.md) — zone list, DNS CRUD, token scoping.
+→ **Full guide:** [cloudflare.md](net/cloudflare.md) — zone list, DNS CRUD, token scoping.
 
 ---
 
@@ -631,4 +613,4 @@ Day 60 → token invalid — re-run auth
 
 *Add new tools following the format above. For installs that need significant
 explanation, create a dedicated `.md` with the narrative approach and link
-from this file. See `.agent/AGENT.md` for the `tools.md` maintenance guide.*
+from this file. See `AGENTS.md` for the `tools.md` maintenance guide.*

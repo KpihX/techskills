@@ -372,4 +372,4 @@ glab api user | python3 -c "import sys,json; u=json.load(sys.stdin); print(u['us
 - [glab documentation](https://gitlab.com/gitlab-org/cli/-/blob/main/docs/source/index.md)
 - [GitLab REST API](https://docs.gitlab.com/ee/api/rest/)
 - [glab releases](https://gitlab.com/gitlab-org/cli/-/releases)
-- [GitHub CLI (`gh`) guide](gh.md)
+- [GitHub CLI (`gh`) guide](dev/gh.md)

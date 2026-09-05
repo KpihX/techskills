@@ -67,7 +67,7 @@ Two entries — homelab HTTP (primary) with local stdio fallback:
 }
 ```
 
-**Why the login shell wrapper on the fallback?** `tick-mcp` needs TickTick OAuth tokens from `bw-env`. Claude Code doesn't load a login shell, so env vars from `~/.kshrc` are invisible. `zsh -l -c` sources `.zprofile` → `.kshrc` → secrets. See [zsh_env.md](../zsh_env.md).
+**Why the login shell wrapper on the fallback?** `tick-mcp` needs TickTick OAuth tokens from `bw-env`. Claude Code doesn't load a login shell, so env vars from `~/.kshrc` are invisible. `zsh -l -c` sources `.zprofile` → `.kshrc` → secrets. See [zsh_env.md](system/zsh_env.md).
 
 ---
 

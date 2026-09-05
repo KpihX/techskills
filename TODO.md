@@ -6,10 +6,12 @@
 - [ ] `ssh-hardening.md` — SSH key management, Bitwarden SSH agent, port & auth config
 - [ ] `docker.md` — Docker Engine on Ubuntu 24.04, rootless mode, network basics
 - [ ] `proxmox-lxc.md` — LXC container lifecycle, networking, GPU passthrough
-- [ ] `npm-prefix.md` — Version-agnostic npm global prefix (`~/.npm-global`), avoiding nvm traps
-- [ ] `bw-env.md` — Bitwarden-backed env manager: secrets injected to RAM via `/dev/shm`
+- [ ] `system/bw-env.md` — Bitwarden-backed env manager: secrets injected to RAM via `/dev/shm`
+- [ ] `apps/tg.md` — Telegram CLI (Bot API + Telethon user API)
 
 ## Done
+- [x] Reorg 0.10.0 — tutorials into `system/` · `dev/` · `net/` · `apps/` · `scripts/`, all refs base-relative
+- [x] `dev/npm-prefix.md` — Version-agnostic npm global prefix (`~/.npm-global`), avoiding nvm traps
 - [x] `automount_drive.md` — Universal Auto-Mount for External Disks tutorial
 - [x] `qmd.md` — QMD: Local AI-powered semantic search engine tutorial
 - [x] Project init: `git init`, Docsify setup, agent symlinks (`CLAUDE.md`, `GEMINI.md`, `AGENTS.md`)

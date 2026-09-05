@@ -104,7 +104,13 @@ m365 status --output json
 m365 login --authType deviceCode --appId <your-app-id> --tenant consumers --debug
 ```
 
-Note: in this environment, `m365 status` may show `"connectedAs": ""` even when reads work. Always validate with a real mailbox read.
+Note: `m365 status` may show `"connectedAs": ""` even when reads work. Validate with:
+
+```bash
+m365 request --url "https://graph.microsoft.com/v1.0/me" --method get --output json
+```
+
+On personal MSA, `--folderName Inbox` may return `[]` while `m365 outlook message list` (no folder) still returns mail — use `/me` or list without folder.
 
 ---
 
@@ -213,10 +219,26 @@ This is the escape hatch — full Graph API access through the CLI's auth contex
 | `CLIMICROSOFT365_APPID` | Azure App ID | `GLOBAL_ENV_VARS` |
 | `CLIMICROSOFT365_TENANT` | Azure Tenant ID | `GLOBAL_ENV_VARS` |
 
-Tokens (OAuth refresh) are cached locally by the CLI at `~/.local/share/m365/`. These are not stored in Bitwarden — they auto-refresh as long as you logged in once.
+Tokens (OAuth refresh) are cached locally by the CLI (v11+) at:
 
+- `$HOME/.cli-m365-msal.json` (MSAL cache)
+- `$HOME/.cli-m365-connection.json` (active connection)
+- `$HOME/.cli-m365-all-connections.json` (named connections)
+
+These are not stored in Bitwarden. Access tokens (~1 h) refresh automatically while the refresh token is valid (~**90 days** idle for MSA `consumers` — Microsoft policy, not CLI-configurable).
+
+**Persist CLI defaults once:**
+
+```bash
+m365 cli config set --key authType --value deviceCode
+m365 cli config set --key tenantId --value consumers
 ```
-If tokens expire or become invalid:
-  rm -rf ~/.local/share/m365/ ~/.config/m365/
-  m365 login --authType deviceCode
+
+**If tokens expire or become invalid:**
+
+```bash
+m365 logout
+m365 login --authType deviceCode --tenant consumers
 ```
+
+Do **not** rely on `rm -rf ~/.config/m365` / `~/.local/share/m365/` (obsolete paths on v11).

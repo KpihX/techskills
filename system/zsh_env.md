@@ -313,5 +313,5 @@ def get_secret(name: str) -> str:
 
 ## 🔗 See Also
 
-- [🌊 WaveTerm](waveterm.md) — cmd widget configuration and the `zsh -l -c` pattern applied
-- [🔑 bw-env — Secret Injection](bw-env.md) — how secrets reach `/dev/shm` and what `.kshrc` loads
+- [🌊 WaveTerm](apps/waveterm.md) — cmd widget configuration and the `zsh -l -c` pattern applied
+- [🔑 bw-env — Secret Injection](system/bw-env.md) — how secrets reach `/dev/shm` and what `.kshrc` loads
