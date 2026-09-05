@@ -30,6 +30,7 @@ No theory, no made-up examples. Everything here was lived on my machine and docu
 | [🖼️ Recover deleted images](system/ubuntu-deleted-files-recovery.md) | ext4 undelete runbook — thumbnails, PhotoRec, extundelete |
 | [💿 Windows 11 USB Install](system/win11_usb_install.md) | Portable SSD install — installer bug + policy block bypass |
 | [🍷 Wine](system/wine.md) | 32-bit isolation and HiDPI display for Windows apps |
+| [🖥️ tmux](system/tmux.md) | Persistent terminal multiplexer — sessions, sudo gate, auto-notify |
 | [🔑 bw-env — Secret Injection](system/bw-env.md) | Bitwarden-backed secrets in RAM: unlock, inject, auto-lock on sleep *(planned — see TODO.md)* |
 
 ### 🧑‍💻 Dev
@@ -86,6 +87,12 @@ MCPs work inside MCP hosts only. The **proxies** port the same catalogs to plain
 | [🌐 browser-proxy](proxies/browser-proxy.md) | Visible Edge automation — 71 actions, daemon + extension bridge |
 | [💼 link-proxy](proxies/link-proxy.md) | LinkedIn REST v2 — 10 actions, 60-day token ritual |
 | [💬 whats-proxy](proxies/whats-proxy.md) | WhatsApp via Baileys — 68 actions, guarded daemon, receipt honesty |
+
+## 🤖 AI Runtimes
+
+| Tutorial | Topic |
+|----------|-------|
+| [🤖 OpenCode](ai/opencode.md) | Agent runtime + sovereign kernel — 19 plugins, 3 providers, permissions, web stack |
 
 ## 🐚 Shell Commands
 

@@ -14,10 +14,10 @@
   - [🖼️ Recover deleted images (ext4)](system/ubuntu-deleted-files-recovery.md)
   - [💿 Windows 11 USB Install](system/win11_usb_install.md)
   - [🍷 Wine](system/wine.md)
+  - [🖥️ tmux — Terminal Multiplexer](system/tmux.md)
   - [🔑 bw-env — Secret Injection](system/bw-env.md)
 
-- **🧑‍💻 Dev**
-  - [🐙 GitHub CLI (gh)](dev/gh.md)
+- **🧑‍💻 Dev**  - [🐙 GitHub CLI (gh)](dev/gh.md)
   - [🦊 GitLab CLI (glab)](dev/glab.md)
   - [🌐 GitHub Pages + Docsify](dev/github-pages.md)
   - [📦 Node.js & npm prefix](dev/npm-prefix.md)
@@ -52,6 +52,9 @@
   - [🌐 browser-proxy — Edge](proxies/browser-proxy.md)
   - [💼 link-proxy — LinkedIn](proxies/link-proxy.md)
   - [💬 whats-proxy — WhatsApp](proxies/whats-proxy.md)
+
+- **🤖 AI Runtimes**
+  - [🤖 OpenCode — Agent Runtime](ai/opencode.md)
 
 - **🐚 Shell Commands**
   - [🔧 awk](sh/awk_tutorial.md)

@@ -232,9 +232,9 @@ techskills/
 │                         ubuntu-asus-ve228, ubuntu-recovery, win11_usb, wine, bw-env*)
 ├── dev/                ← Dev toolchain (gh, glab, github-pages, npm-prefix, bun, fnm, azure-cli)
 ├── net/                ← Network & cloud (tailscale, cloudflare, cloud-hub)
-├── apps/               ← User apps (waveterm, edge-agent-cdp-setup, m365-cli, gws-cli, qmd)
-│   └── assets/         ← Per-domain screenshots (e.g. waveterm connections/secrets)
+├── apps/               ← User apps (waveterm, edge-agent-cdp-setup, m365-cli, gws-cli, qmd)│   └── assets/         ← Per-domain screenshots (e.g. waveterm connections/secrets)
 │       └── templates/  ← Template files + AGENTS.md index (no more root templates/)
+├── ai/                 ← AI runtimes (opencode + sovereign kernel wiring)
 ├── mcps/               ← MCP server tutorials (bw-mcp, tick-mcp, whats-mcp)
 ├── proxies/            ← Solo proxy CLIs: proxies.md (entry/ADN) + 1 page per proxy
 │                         (tg, tick, ts, mail, browser, link, whats — from live --help)
@@ -258,6 +258,7 @@ techskills/
 - `dev/` ← dev toolchain (gh, glab, github-pages, npm-prefix, bun, fnm, azure-cli)
 - `net/` ← network & cloud (tailscale, cloudflare, cloud-hub)
 - `apps/` ← user apps (waveterm, edge-agent-cdp-setup, m365-cli, gws-cli, qmd, tg)
+- `ai/` ← AI runtimes (opencode)
 - `mcps/` ← MCP server tutorials only
 
 ---

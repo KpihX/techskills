@@ -469,6 +469,29 @@ vim                  # fallback: SSH, containers, visudo
 
 → **Full guide:** [nvim.md](dev/nvim.md) — centralized config, LSP map, uv Python provider, tmux workflow, trash system.
 
+### tmux
+
+Persistent terminal multiplexer — the session survives closed terminals and SSH drops. One named session per equipment, windows as tabs, panes as splits. The ONLY channel for `sudo`/passphrase elevation (agents never raw-sudo), armed `send-keys` with automatic completion notifications, resurrect+continuum session survival, mouse + 50k scrollback.
+
+```bash
+tmux ls && tmux new -ds work
+```
+
+→ **Full guide:** [tmux.md](system/tmux.md) — mental model, sudo gate, run-and-notify, survival kit.
+
+## 🤖 AI Runtimes
+
+### OpenCode
+
+Terminal-native agent runtime wired to the sovereign `~/.agents/` kernel — one config, shared skills/agents across brands. 19 plugins (hooks, voice TUI, slash commands, web lens), three provider lanes (local Ollama, remote Ollama6, OpenCode Go), 3-tier permissions, 3-service web stack over Tailscale Serve.
+
+```bash
+curl -fsSL https://opencode.ai/install | bash
+opencode --version && opencode debug config
+```
+
+→ **Full guide:** [opencode.md](ai/opencode.md) — kernel wiring, full plugin tree, providers, permissions, web stack.
+
 ---
 
 ---
