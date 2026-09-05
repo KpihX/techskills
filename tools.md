@@ -458,6 +458,17 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 
 → **Full guide:** [zsh_env.md](system/zsh_env.md) — `.zshenv` / `.zprofile` / `.zshrc` triptych, when each file is sourced, the `zsh -l -c` secret injection pattern, and the GUI app gap (WaveTerm, VS Code).
 
+### Neovim
+
+Terminal-native daily-driver editor. Lazy.nvim plugin manager (~38 plugins: Telescope, Oil, Neogit, Harpoon, Trouble), Mason LSP servers (basedpyright via uv, ruff, lua_ls, bashls, marksman, texlab), tmux-aware pane navigation, FreeDesktop trash for deletes. Config centralized in the `k-nvim` skill assets, symlinked as `~/.config/nvim/`. Plain Vim stays as the SSH/container fallback.
+
+```bash
+nvim                 # daily driver
+vim                  # fallback: SSH, containers, visudo
+```
+
+→ **Full guide:** [nvim.md](dev/nvim.md) — centralized config, LSP map, uv Python provider, tmux workflow, trash system.
+
 ---
 
 ---

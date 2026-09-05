@@ -42,6 +42,7 @@ No theory, no made-up examples. Everything here was lived on my machine and docu
 | [📦 Node.js & npm prefix](dev/npm-prefix.md) | nvm, `.nvmrc`, and the `~/.npm-global` fix for tools that auto-update without nvm sourced |
 | [🥟 Bun — JS/TS Runtime](dev/bun.md) | Sovereign JS/TS toolchain — runtime, package manager, test runner, bundler in one binary |
 | [📦 fnm — Fast Node Manager](dev/fnm.md) | Rust Node version manager — dynamic PATH, `--use-on-cd`, replaces nvm |
+| [📝 Neovim](dev/nvim.md) | Daily-driver editor — Lazy.nvim, Mason LSP, Telescope, tmux workflow |
 | [☁️ Azure CLI](dev/azure-cli.md) | Deactivated — no subscription; `m365` only |
 
 ### 🌐 Net

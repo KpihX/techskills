@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Added
+- [x] `dev/nvim.md` — Neovim daily-driver tutorial from `k-nvim` skill (centralized config, LSP map, uv provider, tmux workflow, trash)
 - [x] `proxies/` — 8 pages from live binaries (`admin --help`, `do --help`, `do <action> --help` × 306): `proxies.md` entry (shared ADN, MCP→proxy story) + tg (24) · tick (52) · ts (44) · mail (37) · browser (71) · link (10) · whats (68)
 - [x] `tools.md` — MCP section reframes proxies as solo successors + `**Proxy (solo):**` cross-links on tick/whats/mail/linkedin/tg entries
 

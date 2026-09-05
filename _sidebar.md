@@ -23,6 +23,7 @@
   - [📦 Node.js & npm prefix](dev/npm-prefix.md)
   - [🥟 Bun — JS/TS Runtime](dev/bun.md)
   - [📦 fnm — Fast Node Manager](dev/fnm.md)
+  - [📝 Neovim — Daily Editor](dev/nvim.md)
   - [☁️ Azure CLI (off)](dev/azure-cli.md)
 
 - **🌐 Net**
