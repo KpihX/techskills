@@ -134,9 +134,9 @@ Every agent adding or editing a `.md` tutorial MUST follow:
 
 6. **No build step.** Pure Markdown + Docsify. No Node, no bundler.
 
-### Templates (per-domain assets + `templates/AGENTS.md` index)
+### Templates (per-domain homes + `apps/assets/templates/AGENTS.md` index)
 
-Reusable config and boilerplate files live **next to their tutorial** (e.g. `apps/assets/waveterm-widgets.json`) — extracted from tutorials to keep `.md` files readable and to make the configs actually reusable. `templates/AGENTS.md` is the template index page.
+Reusable config and boilerplate files live **next to their tutorial** (e.g. `apps/assets/templates/waveterm-widgets.json`) — extracted from tutorials to keep `.md` files readable and to make the configs actually reusable. `apps/assets/templates/AGENTS.md` is the template index page.
 
 **When to create a template:**
 - Any tool entry in `tools.md` that ships with a non-trivial config file (`.toml`, `.html`, `.yaml`, `.json`, `.conf`…)
@@ -149,18 +149,18 @@ Reusable config and boilerplate files live **next to their tutorial** (e.g. `app
 - Use ALL_CAPS for placeholders: `PROJECT_NAME`, `SITE_TITLE`, etc.
 
 **After creating a template:**
-1. Add a row to `templates/AGENTS.md` (the template index)
+1. Add a row to `apps/assets/templates/AGENTS.md` (the template index)
 2. Under the relevant tool in `tools.md`, add a `**Templates:**` line with a link:
    ```markdown
    **Templates:**
-   - [`apps/assets/filename.ext`](https://github.com/kpihx/techskills/blob/master/apps/assets/filename.ext) — one-line description. Copy to X, rename to Y, fill Z.
+   - [`apps/assets/templates/filename.ext`](https://github.com/kpihx/techskills/blob/master/apps/assets/templates/filename.ext) — one-line description. Copy to X, rename to Y, fill Z.
    ```
-   ⚠️ **Always use absolute GitHub blob URLs** — relative paths like `(apps/assets/filename.ext)` cause 404 on the Docsify site because Docsify intercepts relative links and tries to load them as Markdown routes. [CLAUDE]
+   ⚠️ **Always use absolute GitHub blob URLs** — relative paths like `(apps/assets/templates/filename.ext)` cause 404 on the Docsify site because Docsify intercepts relative links and tries to load them as Markdown routes. [CLAUDE]
 3. In the relevant tutorial `.md`, add a callout at the start of the section where the file is introduced:
    ```markdown
-   > **Template available:** [`apps/assets/filename.ext`](https://github.com/kpihx/techskills/blob/master/apps/assets/filename.ext) — copy, rename, fill placeholders.
+   > **Template available:** [`apps/assets/templates/filename.ext`](https://github.com/kpihx/techskills/blob/master/apps/assets/templates/filename.ext) — copy, rename, fill placeholders.
    ```
-4. `git add apps/assets/ tools.md <tutorial>.md && git commit -m "docs(templates): add <name> template"`
+4. `git add apps/assets/templates/ tools.md <tutorial>.md && git commit -m "docs(templates): add <name> template"`
 5. Push both remotes.
 
 ### `tools.md` Maintenance Guide
@@ -209,7 +209,7 @@ sudo tailscale up
   **Repos:** [GitHub](https://github.com/KpihX/<repo>) · [GitLab](https://gitlab.com/kpihx/<repo>)
   ```
 - If a template exists for the tool, add a `**Templates:**` subsection after the repo links.
-- The rule: anything that has its own tracked source (pushed repo or templates/) MUST be linked from `tools.md` — treat it as the single discovery entry point.
+- The rule: anything that has its own tracked source (pushed repo or per-domain templates/) MUST be linked from `tools.md` — treat it as the single discovery entry point.
 
 **After adding a tool to `tools.md`:**
 1. No need to update `_sidebar.md` or `README.md` — `tools.md` is already linked.
@@ -228,13 +228,13 @@ techskills/
 ├── TODO.md
 ├── tools.md            ← Formal living tools inventory
 ├── assets/             ← Brand hub ONLY (logo, banner — flat, no subfolder)
-├── templates/          ← Template index (`AGENTS.md`); files live next to their tutorial
 ├── system/             ← Ubuntu core tutorials (automount, clean, zsh_env, nautilus,
 │                         ubuntu-asus-ve228, ubuntu-recovery, win11_usb, wine, bw-env*)
 ├── dev/                ← Dev toolchain (gh, glab, github-pages, npm-prefix, bun, fnm, azure-cli)
 ├── net/                ← Network & cloud (tailscale, cloudflare, cloud-hub)
 ├── apps/               ← User apps (waveterm, edge-agent-cdp-setup, m365-cli, gws-cli, qmd)
 │   └── assets/         ← Per-domain screenshots (e.g. waveterm connections/secrets)
+│       └── templates/  ← Template files + AGENTS.md index (no more root templates/)
 ├── mcps/               ← MCP server tutorials (bw-mcp, tick-mcp, whats-mcp)
 ├── sh/                 ← Native shell command tutorials (awk, sed, grep, regex…)
 │   │                      STRICT RULE: sh/ contains ONLY tutorials about Unix/shell

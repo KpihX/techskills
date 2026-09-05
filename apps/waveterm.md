@@ -126,7 +126,7 @@ auto-resume sessions, pass the right flag:
 - Codex: `resume <session-id>` (get the ID from `~/.codex/`)
 - Gemini / Copilot: `--resume 1`
 
-> **Template:** [`apps/assets/waveterm-widgets.json`](https://github.com/kpihx/techskills/blob/master/apps/assets/waveterm-widgets.json) — full template with claude, codex, gemini, copilot, vibe, github, gitlab. Copy to `~/.config/waveterm/widgets.json`, fill in `BINARY_PATH_*` and `SESSION_ID_*` placeholders.
+> **Template:** [`apps/assets/templates/waveterm-widgets.json`](https://github.com/kpihx/techskills/blob/master/apps/assets/templates/waveterm-widgets.json) — full template with claude, codex, gemini, copilot, vibe, github, gitlab. Copy to `~/.config/waveterm/widgets.json`, fill in `BINARY_PATH_*` and `SESSION_ID_*` placeholders.
 
 ---
 
@@ -248,7 +248,7 @@ The AI modes config looks like this:
 The `ai:apitokensecretname` field doesn't store the key directly — it names
 a **wsh secret** that WaveTerm reads at runtime. That's the next section.
 
-> **Template:** [`apps/assets/waveterm-ai-modes.json`](https://github.com/kpihx/techskills/blob/master/apps/assets/waveterm-ai-modes.json) — 6 models pre-configured: Groq Scout, Groq 120B, Groq Maverick, Mistral Large, Codestral, Pixtral. Copy the content into Wave Config → Wave AI Modes and set your secrets.
+> **Template:** [`apps/assets/templates/waveterm-ai-modes.json`](https://github.com/kpihx/techskills/blob/master/apps/assets/templates/waveterm-ai-modes.json) — 6 models pre-configured: Groq Scout, Groq 120B, Groq Maverick, Mistral Large, Codestral, Pixtral. Copy the content into Wave Config → Wave AI Modes and set your secrets.
 
 ---
 

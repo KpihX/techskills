@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.10.1] — 2026-09-05
+
+### Changed
+- [x] `templates/` (root) → `apps/assets/templates/` (JSONs + AGENTS.md index, no more root templates/) — sidebar + 6 blob URLs + labels + AGENTS.md workflow updated
+
 ## [0.10.0] — 2026-09-05
 
 ### Removed

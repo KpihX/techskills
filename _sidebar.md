@@ -3,7 +3,7 @@
 - **Reference**
   - [🏠 Home](README.md)
   - [🧰 Tools & Apps](tools.md)
-  - [📄 Templates](templates/AGENTS.md)
+  - [📄 Templates](apps/assets/templates/AGENTS.md)
 
 - **🖥️ System**
   - [💾 Automount External Disk](system/automount_drive.md)

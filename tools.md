@@ -424,8 +424,8 @@ sudo dpkg -i waveterm_*.deb
 → **Full guide:** [waveterm.md](apps/waveterm.md) — sidebar widgets, SSH connections, BYOK AI modes (Groq, Mistral), wsh secrets.
 
 **Templates:**
-- [`apps/assets/waveterm-widgets.json`](https://github.com/kpihx/techskills/blob/master/apps/assets/waveterm-widgets.json) — AI CLI sidebar widgets (claude, codex, gemini, copilot, vibe) + GitHub/GitLab web shortcuts. Copy to `~/.config/waveterm/widgets.json`, fill `BINARY_PATH_*` and `SESSION_ID_*`.
-- [`apps/assets/waveterm-ai-modes.json`](https://github.com/kpihx/techskills/blob/master/apps/assets/waveterm-ai-modes.json) — BYOK AI Modes (Groq Scout, Groq Maverick, Mistral Large, Codestral, Pixtral). Set secrets via `wsh secret set`, paste into Wave Config → Wave AI Modes.
+- [`apps/assets/templates/waveterm-widgets.json`](https://github.com/kpihx/techskills/blob/master/apps/assets/templates/waveterm-widgets.json) — AI CLI sidebar widgets (claude, codex, gemini, copilot, vibe) + GitHub/GitLab web shortcuts. Copy to `~/.config/waveterm/widgets.json`, fill `BINARY_PATH_*` and `SESSION_ID_*`.
+- [`apps/assets/templates/waveterm-ai-modes.json`](https://github.com/kpihx/techskills/blob/master/apps/assets/templates/waveterm-ai-modes.json) — BYOK AI Modes (Groq Scout, Groq Maverick, Mistral Large, Codestral, Pixtral). Set secrets via `wsh secret set`, paste into Wave Config → Wave AI Modes.
 
 ### Warp
 
